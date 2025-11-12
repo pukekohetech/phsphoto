@@ -36,7 +36,7 @@
     .media-wrap{position:relative;border-radius:var(--radius);overflow:hidden;background:#000;border:1px solid var(--border)}
     .media{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;display:block;background:#000}
     img.media{object-fit:contain;background:#000}
-    .stamp-overlay{position:absolute;top:8px;right:8px;padding:6px 10px;border-radius:10px;background:rgba(0,0,0,.55);color:#fff;font-weight:600;font-size:clamp(12px,1.2vw + 10px,18px);line-height:1.25;white-space:pre-line;text-align:right;max-width:85%;pointer-events:none}
+    .stamp-overlay{position:absolute;top:8px;right:8px;padding:6px 10px;border-radius:10px;background:rgba(0,0,0,0.55);color:#fff;font-weight:600;font-size:clamp(12px,1.2vw + 10px,18px);line-height:1.25;white-space:pre-line;text-align:right;max-width:85%;pointer-events:none}
 
     .toast{display:none;padding:10px 12px;border-radius:var(--radius);background:var(--ok);color:#fff}
     .toast.error{background:var(--err)}
@@ -144,6 +144,25 @@
 
     let stream = null;
     let stampedFile = null;
+
+    // -------- Helpers for filename ----------
+    function pad2(n){ return String(n).padStart(2,'0'); }
+    function dateStamp(){
+      const d = new Date();
+      return `${d.getFullYear()}${pad2(d.getMonth()+1)}${pad2(d.getDate())}_${pad2(d.getHours())}${pad2(d.getMinutes())}`;
+    }
+    function cleanName(s){
+      return (s||'').trim().replace(/\s+/g,'_').replace(/[^A-Za-z0-9_-]/g,'');
+    }
+    function teacherCodeFromEmail(email){
+      const user = (email||'').split('@')[0] || '';
+      return user.replace(/[^A-Za-z]/g,'') || 'nocode';
+    }
+    function buildFilename(){
+      const student = cleanName(nameInput.value) || 'Unknown';
+      const tcode = teacherCodeFromEmail(teacherEmail.value);
+      return `PHS_${student}_${tcode}_${dateStamp()}.jpg`;
+    }
 
     // UI helpers
     function showToast(text, ok=true){
@@ -270,22 +289,26 @@
           ctx.drawImage(loaded.img, 0, 0, w, h);
         }
         drawStamp(ctx, buildStampLines(), canvas.width);
-        const dataURL = canvas.toDataURL('image/jpeg', 0.9);
+
+        const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.9));
+        stampedFile = new File([blob], buildFilename(), { type:'image/jpeg' });
+
+        const dataURL = URL.createObjectURL(stampedFile);
         preview.src = dataURL;
         preview.style.display = 'block';
         video.style.display = 'none';
-
-        const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.9));
-        stampedFile = new File([blob], `photo_${Date.now()}.jpg`, { type:'image/jpeg' });
+        setTimeout(()=>URL.revokeObjectURL(dataURL), 0);
       } finally { try { loaded.revoke?.(); } catch {} }
     }
 
     async function stampFromVideoFrame(){
       const vw = video.videoWidth, vh = video.videoHeight;
       if(!vw || !vh) throw new Error('camera-not-ready');
+
       const off = document.createElement('canvas');
       off.width = vw; off.height = vh;
       off.getContext('2d').drawImage(video, 0, 0);
+
       const img = new Image();
       await new Promise((resolve, reject) => {
         img.onload = resolve;
@@ -299,13 +322,14 @@
       ctx.drawImage(img, 0, 0, w, h);
       drawStamp(ctx, buildStampLines(), canvas.width);
 
-      const dataURL = canvas.toDataURL('image/jpeg', 0.9);
+      const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.9));
+      stampedFile = new File([blob], buildFilename(), { type:'image/jpeg' });
+
+      const dataURL = URL.createObjectURL(stampedFile);
       preview.src = dataURL;
       preview.style.display = 'block';
       video.style.display = 'none';
-
-      const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.9));
-      stampedFile = new File([blob], `photo_${Date.now()}.jpg`, { type:'image/jpeg' });
+      setTimeout(()=>URL.revokeObjectURL(dataURL), 0);
     }
 
     // Share vs Gmail compose
@@ -337,7 +361,6 @@ Time: ${formatTimestamp()}`;
       const subject = `printme — ${stampedFile.name}`;
 
       if (gmailToggle.checked) {
-        // Prefill Gmail To/Subject/Body; download the file for quick attach.
         const url = buildGmailComposeURL({ to: teacherEmail.value || '', subject, body });
         window.open(url, '_blank', 'noopener,noreferrer');
         downloadStampedIfAny();
@@ -346,13 +369,11 @@ Time: ${formatTimestamp()}`;
         return;
       }
 
-      // Native share (best on phones). Can't set the 'To' here.
       try{
         if(navigator.canShare && navigator.canShare({ files:[stampedFile] })){
           await navigator.share({ files:[stampedFile], title: subject, text: body });
           showToast("Shared via app");
         }else{
-          // Desktop/unsupported: download only
           const a = document.createElement('a');
           a.href = URL.createObjectURL(stampedFile);
           a.download = stampedFile.name;
@@ -395,7 +416,7 @@ Time: ${formatTimestamp()}`;
           showToast("Failed to stamp", false);
         }
       } finally {
-        // Important: clear stale file so it won't be reused next time
+        // clear stale file so it won't be reused next time
         try { fileInput.value = ''; } catch {}
       }
     }
