@@ -1,99 +1,102 @@
-Pukekohe High School Photo Evidence Stamper - User Guide
-The Pukekohe High School Photo Evidence Stamper is a mobile-friendly web app designed to help students and teachers capture or upload photos, add a timestamped stamp with student and teacher details, and share the results easily. It’s built as a Progressive Web App (PWA), meaning it works offline, can be installed on your phone or computer, and feels like a native app. Whether you’re documenting a project, experiment, or assignment, this app makes it simple to create professional, stamped photos for submission.
-Key Features
+# Pukekohe High School Photo Stamper 📸
 
-Capture or Upload Photos: Use your device’s camera or upload an existing photo.
-Automatic Stamping: Adds a top-right stamp with:
-Student name and teacher name.
-"Pukekohe High School" and the current date/time.
-Optional subject/project name (e.g., "Food Tech — Burger Build").
+Welcome to the **Pukekohe High School Photo Evidence Stamper**! 🎉 This snappy Progressive Web App (PWA) lets students and teachers capture or upload photos, slap on a professional stamp with names and dates, and share them faster than you can say "homework done!" Whether you're showcasing a science project, a culinary masterpiece, or an art creation, this app makes it a breeze to document and send your work. 🚀
 
-Easy Sharing: Share stamped photos via email or other apps, with teacher email included for quick pasting.
-Mobile-Optimized: Works best on phones (iOS Safari, Android Chrome) but supports desktops too.
-Offline Support: Install it to use without internet (after initial load).
-User-Friendly: Remembers your name and teacher, offers a "Tips" section, and includes keyboard shortcuts.
+![App Preview](screenshots/app-preview.png)
 
-How to Use the App
-Follow these steps to capture, stamp, and share a photo:
+[![GitHub stars](https://img.shields.io/github/stars/your-username/your-repo?style=social)](https://github.com/your-username/your-repo/stargazers)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![PWA](https://img.shields.io/badge/PWA-Ready-green.svg)](https://web.dev/progressive-web-apps/)
 
-Open the App:
-Visit the app’s URL in a browser (e.g., Chrome or Safari) on your phone, tablet, or computer.
-For the best experience, use a mobile device with a camera.
+## 🌟 What Makes This App Awesome?
 
-Enable the Camera (if capturing live):
-Tap the "Enable Camera" button (always visible at the top).
-Allow camera access when prompted by your browser.
-You’ll see a live video feed in the preview area, and a “Camera enabled” message will appear.
-If the camera is already active, the button will be grayed out (but still visible).
+This app is your go-to tool for creating stamped, shareable photo evidence at Pukekohe High School. Here’s why it rocks:
 
-Enter Details:
-Student Name: Type your name (e.g., "Alex Smith"). The app saves it for next time and suggests recent names.
-Teacher: Select a teacher from the dropdown (e.g., "Mr Reynolds"). Choose “Custom…” to enter a different teacher’s name and email.
-Subject/Project (optional): Add a subject or project name (e.g., "Science — Solar Model").
-The stamp preview updates in real-time at the top-right of the video/image.
+- **Snap or Upload**: 📷 Use your phone’s camera or upload a photo from your gallery.
+- **Auto-Stamped**: 🖍️ Adds a clean stamp with student name, teacher, school, date/time, and optional subject.
+- **Share in a Flash**: 📧 Send via email or other apps, with the teacher’s email ready to paste.
+- **Mobile Magic**: 📱 Optimized for phones (iOS Safari, Android Chrome), but works on desktops too.
+- **Offline Superpower**: 💾 Install it to use without Wi-Fi after the first load.
+- **Smart & Simple**: 🧠 Saves your name/teacher, offers tips, and supports keyboard shortcuts.
 
-Capture or Upload a Photo:
-To Capture: Ensure the camera is active, frame your shot in the video preview, and tap "Capture & Stamp (Camera)". You can also double-tap the video or press Enter on a keyboard.
-To Upload: Tap "Choose a photo", select an image from your device, then tap "Choose & Stamp (File)".
-The app checks that you’ve entered a student name and selected a teacher. If not, it’ll prompt you to complete these fields.
+## 🚀 How to Use the App
 
-Review the Stamped Photo:
-After capturing or uploading, the video feed hides, and a preview of the stamped photo appears.
-The stamp includes your details in the top-right corner, plus the school crest (if available) in the bottom-right.
-A “Photo ready. Tap Share or Download.” message confirms success.
+Get stamping in just a few taps! Follow these steps to capture, stamp, and share your work:
 
-Share or Download:
-Share: Tap "Share" (or press Ctrl+S) to open your device’s sharing options (e.g., email, Messages, Google Drive). The teacher’s email is included in the message body for easy pasting into an email’s “To” field.
-On mobile, select your email app to send the photo.
-If sharing isn’t supported (e.g., some desktops), the app downloads the photo instead.
+1. **Launch the App** 🌐
+   - Open the app URL in Chrome, Safari, or any modern browser.
+   - Pro tip: Use your phone for the smoothest experience! 📱
 
-Download: Tap "Download" to save the photo to your device, then manually attach it to an email or upload it elsewhere.
-Copy Email (optional): If you chose a custom teacher, tap "Copy email" to copy their email address for pasting.
+2. **Fire Up the Camera** 📸
+   - Hit the **"Enable Camera"** button (always visible at the top).
+   - Grant camera access when asked—you’ll see a live video feed.
+   - Already active? The button grays out but stays visible. ✅
 
-Clear and Start Over:
-Tap "Clear" to reset the app. The preview hides, the video feed reappears (if the camera is active), and you can take a new photo.
+3. **Fill in Your Details** ✍️
+   - **Student Name**: Enter your name (e.g., "Alex Smith"). It’s saved for next time!
+   - **Teacher**: Pick from the dropdown (e.g., "Mrs Devaney") or select “Custom…” for a new teacher.
+   - **Subject** (optional): Add your project (e.g., "Food Tech — Burger Build").
+   - Watch the stamp preview update live in the top-right corner! 👀
 
-Tips and Extras:
-Tap "Tips" at the top for a quick guide, including keyboard shortcuts and installation instructions.
-Toggle the theme (light, dark, auto) with the 🌓 Theme button for better visibility.
-Install the app by tapping "Install" (when available) or using your browser’s “Add to Home Screen” option for offline access.
+4. **Capture or Upload** 🖼️
+   - **Camera**: Frame your shot and tap **"Capture & Stamp (Camera)"** (or double-tap the video/press **Enter**).
+   - **Upload**: Click **"Choose a photo"**, pick an image, then tap **"Choose & Stamp (File)"**.
+   - Forgot your name or teacher? The app will nudge you to fill them in. 😉
 
+5. **Check Your Stamped Photo** 🖌️
+   - The video feed hides, and your stamped photo pops up with:
+     - Your details in the top-right.
+     - The school crest in the bottom-right (if available).
+   - A “Photo ready. Tap Share or Download.” message confirms it’s good to go! 🎉
 
-Tips for Success
+6. **Share or Save** 📤
+   - **Share**: Tap **"Share"** (or **Ctrl+S**) to send via email, Messages, or other apps. The teacher’s email is included for easy pasting.
+     - On mobile, pick your email app to send.
+     - On desktop, it may download if sharing isn’t supported.
+   - **Download**: Tap **"Download"** to save the photo, then attach it manually.
+   - **Copy Email**: For custom teachers, tap **"Copy email"** to grab their email address.
 
-Camera Access: If the camera doesn’t work, ensure you’ve allowed permissions in your browser settings. Try tapping “Enable Camera” again or check your device’s privacy settings.
-Mobile First: The app works best on phones (Safari or Chrome) for seamless sharing via email apps. On desktops, you may need to download and manually attach photos.
-Install for Offline Use: Add the app to your home screen (on iOS: Share → Add to Home Screen; on Android: Menu → Install App) to use it without internet after the first load.
-Keyboard Shortcuts:
-Enter: Capture and stamp (when camera is ready).
-Ctrl+S: Share or download the stamped photo.
+7. **Start Fresh** 🧹
+   - Tap **"Clear"** to reset. The preview vanishes, the video feed returns (if active), and you’re ready for round two!
 
-File Size: Photos are optimized (max width 800px) for quick sharing while maintaining quality.
-No Camera? Upload a photo instead using the “Choose a photo” option.
+8. **Extra Goodies** 🛠️
+   - **Tips**: Tap **"Tips"** for a quick guide and shortcuts.
+   - **Theme**: Switch between light, dark, or auto with the **🌓 Theme** button.
+   - **Install**: Add to your home screen for offline use (look for the **"Install"** button or browser option).
 
-Troubleshooting
+## 🎯 Tips for a Stellar Experience
 
-Camera Not Working?
-Tap “Enable Camera” and allow permissions.
-Check browser settings (e.g., Safari: Settings → Website Settings → Camera; Chrome: Site Settings → Camera).
-Ensure your device has a camera or try another browser/device.
+- **Camera Woes?** Allow permissions in your browser settings (Safari: Settings → Website Settings → Camera; Chrome: Site Settings → Camera). Tap “Enable Camera” again if needed.
+- **Mobile is King**: Use Safari (iOS) or Chrome (Android) for seamless sharing. Desktops work but may require downloading.
+- **Go Offline**: Install the app (iOS: Share → Add to Home Screen; Android: Menu → Install App) to use without internet after the first load.
+- **Shortcuts**:
+  - **Enter**: Capture and stamp.
+  - **Ctrl+S**: Share or download.
+- **Smaller Files**: Photos are optimized (max 800px width) for quick sharing without losing clarity.
+- **No Camera?** Upload a photo using the “Choose a photo” option.
 
-No Share Option?
-Some browsers (e.g., desktop Firefox) don’t support file sharing. Use “Download” and attach the file manually.
+## 🐛 Troubleshooting
 
-Stamp Missing Details?
-Ensure you’ve entered a student name and selected a teacher before capturing/uploading.
+- **Camera Not Working?**
+  - Ensure permissions are granted and tap “Enable Camera” again.
+  - Check device settings or try another browser/device.
+- **Can’t Share?**
+  - Some browsers (e.g., desktop Firefox) don’t support file sharing. Use “Download” and attach manually.
+- **Missing Stamp Details?**
+  - Double-check that you’ve entered a student name and selected a teacher.
+- **Offline Issues?**
+  - Load the app online first to cache files, then install for offline use.
 
-App Not Loading Offline?
-Open the app online first to cache files, then install it for offline use.
+## 🖼️ Screenshots
 
+| Camera View | Stamped Preview | Sharing |
+|-------------|------------------|---------|
+| ![Camera](screenshots/camera.png) | ![Stamped](screenshots/stamped.png) | ![Share](screenshots/share.png) |
 
-Technical Notes
+*Note: Screenshots coming soon! Add your own to the `screenshots/` folder.*
 
-Browser Support: Works on modern browsers (Chrome, Safari, Edge, Firefox). Best on mobile Safari/Chrome for sharing.
-HTTPS Required: The app must be hosted on a secure server (HTTPS) or localhost for camera access.
-Assets: Requires phs_crest.png (optional school crest), icon-192.png, and icon-512.png for the PWA.
-PWA Features: Offline support, installable, and auto-updates via a service worker.
+## 🛠️ For Developers
 
-Feedback
-If you have suggestions or encounter issues, please report them on the GitHub Issues page or contact the developer. This app is designed to make photo evidence collection easy and reliable for Pukekohe High School students and teachers!
+Want to tinker with the app? Here’s the lowdown:
+
+### File Structure
