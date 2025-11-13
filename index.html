@@ -100,9 +100,9 @@
       flex-wrap:wrap;
       gap:var(--space)
     }
-    .primary{background:var(--accent);color:#fff;border:none}
-    .success{background:var(--ok);color:#fff;border:none}
-    .ghost{background:transparent;border:1px dashed var(--border);}
+    .primary{background:var(--accent);color:#fff;border:none;cursor:pointer}
+    .success{background:var(--ok);color:#fff;border:none;cursor:pointer}
+    .ghost{background:transparent;border:1px dashed var(--border);cursor:pointer}
     .media-wrap{
       position:relative;
       border-radius:var(--radius);
@@ -202,7 +202,6 @@
             <div class="btn-row">
               <button id="initBtn" class="primary">Enable Camera</button>
               <button id="stampBtn" class="success">Stamp &amp; Send</button>
-              <!-- explicit download button -->
               <button id="downloadBtn" class="ghost" disabled>Download stamped image</button>
             </div>
             <div class="inline" style="margin-top:8px">
@@ -285,7 +284,9 @@
 
   function teacherCodeFromEmail(email){
     const user = (email||'').split('@')[0] || '';
-    return user.replace(/[^A-Za-z]/g,'') || 'nocode';
+    // keep just letters from the part before @
+    const code = user.replace(/[^A-Za-z]/g,'');
+    return code || 'nocode';
   }
 
   function buildFilename(){
@@ -307,86 +308,20 @@
   teacherSelect.innerHTML = TEACHERS
     .map((t,i)=>`<option value="${i}">${t.name}</option>`)
     .join('');
+  teacherSelect.value = "0";
   teacherEmail.value = TEACHERS[0].email;
-  teacherSelect.addEventListener('change',()=>teacherEmail.value=TEACHERS[teacherSelect.value].email);
+  teacherSelect.addEventListener('change',()=>{
+    const t = TEACHERS[teacherSelect.value];
+    teacherEmail.value = t ? t.email : '';
+    updateOverlay();
+  });
 
   // Camera
   async function initCamera(){
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      showToast("Camera not supported on this device", false);
+      return;
+    }
     try{
       stream = await navigator.mediaDevices.getUserMedia({
         video:{ facingMode:{ ideal:'environment' } },
-        audio:false
-      });
-      video.srcObject = stream;
-      preview.style.display = 'none';
-      video.style.display = 'block';
-      showToast("Camera ready");
-    }catch(e){
-      console.error(e);
-      showToast("Camera access denied", false);
-    }
-  }
-
-  // Stamp text
-  function formatTimestamp(){
-    const d=new Date();
-    return d.toLocaleString([], {
-      year:'numeric',
-      month:'2-digit',
-      day:'2-digit',
-      hour:'2-digit',
-      minute:'2-digit'
-    });
-  }
-
-  function buildStampLines(){
-    const name=(nameInput.value||'').trim();
-    const teacher=TEACHERS[teacherSelect.value]?.name || '';
-    const subj=(subjectInput.value||'').trim();
-    const ts=formatTimestamp();
-    return [
-      [name,teacher].filter(Boolean).join(' • '),
-      'Pukekohe High School • '+ts,
-      subj?subj:null
-    ].filter(Boolean);
-  }
-
-  function updateOverlay(){
-    overlayText.textContent = buildStampLines().join('\n');
-  }
-
-  // Draw
-  function drawStamp(ctx, lines, w){
-    const margin = Math.max(12, Math.round(w * 0.012));
-    const fontSize = Math.max(18, Math.round(w * 0.03));
-    const lineH = Math.round(fontSize * 1.25);
-    const padX = Math.round(fontSize * 0.6);
-    const padY = Math.round(fontSize * 0.5);
-
-    ctx.font = `600 ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
-    ctx.textBaseline = 'top';
-    ctx.textAlign = 'right';
-
-    let maxWidth = 0;
-    for(const l of lines){
-      maxWidth = Math.max(maxWidth, ctx.measureText(l).width);
-    }
-
-    const boxW = Math.ceil(maxWidth + padX*2);
-    const boxH = Math.ceil(lines.length * lineH + padY*2);
-    const x = w - margin - boxW;
-    const y = margin;
-
-    ctx.fillStyle = 'rgba(0,0,0,0.55)';
-    ctx.fillRect(x, y, boxW, boxH);
-
-    ctx.fillStyle = '#fff';
-    let ty = y + padY;
-    const tx = x + boxW - padX;
-    for(const l of lines){
-      ctx.fillText(l, tx, ty);
-      ty += lineH;
-    }
-  }
-
-  // Load from file (
