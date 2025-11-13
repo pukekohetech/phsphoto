@@ -18,465 +18,375 @@
   <style>
     :root{
       color-scheme: light dark;
-      --bg: canvas; --fg: canvastext; --border: color-mix(in oklab, currentColor 25%, transparent);
-      --accent: #2563eb; --ok:#16a34a; --err:#dc2626;
+      --bg: canvas;
+      --fg: canvastext;
+      --border: color-mix(in oklab, currentColor 25%, transparent);
+      --accent: #2563eb;
+      --ok:#16a34a;
+      --err:#dc2626;
       --radius: 12px;
       --space: clamp(10px, 2.2vw, 18px);
       --field-pad: clamp(10px, 1.8vw, 14px);
       --font: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Arial, sans-serif;
     }
     *{box-sizing:border-box}
-    body{font-family:var(--font);margin:0;background:var(--bg);color:var(--fg);}
-    .app{max-width:1100px;margin:0 auto;padding:var(--space);display:grid;gap:var(--space);}
-    h2{margin:0 0 4px;font-size:clamp(18px,2.2vw,24px)}
-    .sub{opacity:.7;font-size:clamp(12px,1.6vw,14px)}
-    .layout{display:grid;gap:var(--space)}
-    @media (min-width: 900px){ .layout{ grid-template-columns: 1fr minmax(320px,520px); align-items:start; } }
-    .card{border:1px solid var(--border);border-radius:var(--radius);padding:var(--space)}
-    .fields{display:grid;gap:var(--space)}
-    .row{display:grid;gap:var(--space)}
-    @media (min-width:600px){ .row--2{grid-template-columns:1fr 1fr} }
-    label{display:block;margin-bottom:6px;font-size:clamp(12px,1.6vw,14px)}
-    input,select,button{width:100%;font:inherit;padding:var(--field-pad);border-radius:var(--radius);border:1px solid var(--border);background:inherit;color:inherit}
-    input:focus,select:focus,button:focus{outline:3px solid color-mix(in oklab, var(--accent) 40%, transparent);outline-offset:2px}
-    .btn-row{display:flex;flex-wrap:wrap;gap:var(--space)}
+    body{
+      font-family:var(--font);
+      margin:0;
+      background:var(--bg);
+      color:var(--fg);
+    }
+    .app{
+      max-width:1100px;
+      margin:0 auto;
+      padding:var(--space);
+      display:grid;
+      gap:var(--space);
+    }
+    h2{
+      margin:0 0 4px;
+      font-size:clamp(18px,2.2vw,24px)
+    }
+    .sub{
+      opacity:.7;
+      font-size:clamp(12px,1.6vw,14px)
+    }
+    .layout{
+      display:grid;
+      gap:var(--space)
+    }
+    @media (min-width: 900px){
+      .layout{
+        grid-template-columns: 1fr minmax(320px,520px);
+        align-items:start;
+      }
+    }
+    .card{
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:var(--space)
+    }
+    .fields{
+      display:grid;
+      gap:var(--space)
+    }
+    .row{
+      display:grid;
+      gap:var(--space)
+    }
+    @media (min-width:600px){
+      .row--2{grid-template-columns:1fr 1fr}
+    }
+    label{
+      display:block;
+      margin-bottom:6px;
+      font-size:clamp(12px,1.6vw,14px)
+    }
+    input,select,button{
+      width:100%;
+      font:inherit;
+      padding:var(--field-pad);
+      border-radius:var(--radius);
+      border:1px solid var(--border);
+      background:inherit;
+      color:inherit
+    }
+    input:focus,select:focus,button:focus{
+      outline:3px solid color-mix(in oklab, var(--accent) 40%, transparent);
+      outline-offset:2px
+    }
+    .btn-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:var(--space)
+    }
     .primary{background:var(--accent);color:#fff;border:none}
     .success{background:var(--ok);color:#fff;border:none}
     .ghost{background:transparent;border:1px dashed var(--border);}
-
-    .media-wrap{position:relative;border-radius:var(--radius);overflow:hidden;background:#000;border:1px solid var(--border)}
-    .media{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;display:block;background:#000}
-    img.media{object-fit:contain;background:#000}
-    .stamp-overlay{position:absolute;top:8px;right:8px;padding:6px 10px;border-radius:10px;background:rgba(0,0,0,0.55);color:#fff;font-weight:600;font-size:clamp(12px,1.2vw + 10px,18px);line-height:1.25;white-space:pre-line;text-align:right;max-width:85%;pointer-events:none}
-
-    .toast{display:none;padding:10px 12px;border-radius:var(--radius);background:var(--ok);color:#fff}
+    .media-wrap{
+      position:relative;
+      border-radius:var(--radius);
+      overflow:hidden;
+      background:#000;
+      border:1px solid var(--border)
+    }
+    .media{
+      width:100%;
+      height:auto;
+      aspect-ratio:4/3;
+      object-fit:cover;
+      display:block;
+      background:#000
+    }
+    img.media{
+      object-fit:contain;
+      background:#000
+    }
+    .stamp-overlay{
+      position:absolute;
+      top:8px;
+      right:8px;
+      padding:6px 10px;
+      border-radius:10px;
+      background:rgba(0,0,0,0.55);
+      color:#fff;
+      font-weight:600;
+      font-size:clamp(12px,1.2vw + 10px,18px);
+      line-height:1.25;
+      white-space:pre-line;
+      text-align:right;
+      max-width:85%;
+      pointer-events:none
+    }
+    .toast{
+      display:none;
+      padding:10px 12px;
+      border-radius:var(--radius);
+      background:var(--ok);
+      color:#fff
+    }
     .toast.error{background:var(--err)}
-    .hint{font-size:clamp(12px,1.6vw,14px);opacity:.8}
-    .inline{display:flex;align-items:center;gap:8px}
+    .hint{
+      font-size:clamp(12px,1.6vw,14px);
+      opacity:.8
+    }
+    .inline{
+      display:flex;
+      align-items:center;
+      gap:8px
+    }
   </style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <h2>Pukekohe High School — Photo Stamper</h2>
-      <div class="sub">Stamp Student • Teacher • Pukekohe High School • Date/Time (+ optional Subject). One button to capture or use a selected file and send.</div>
-    </header>
-
-    <div class="layout">
-      <!-- LEFT: controls -->
-      <section class="card">
-        <div class="fields">
-          <div>
-            <label for="name">Student Name</label>
-            <input id="name" placeholder="e.g., Alex Smith" />
-          </div>
-
-          <div class="row row--2">
-            <div>
-              <label for="teacherSelect">Teacher</label>
-              <select id="teacherSelect"></select>
-            </div>
-            <div>
-              <label for="teacherEmail">Teacher Email</label>
-              <input id="teacherEmail" type="email" />
-            </div>
-          </div>
-
-          <div>
-            <label for="subject">Optional Subject</label>
-            <input id="subject" placeholder="e.g., Science Project" />
-          </div>
-
-          <div class="row row--2">
-            <div>
-              <label for="fileInput">Use a photo from device (optional)</label>
-              <input id="fileInput" type="file" accept="image/*" />
-            </div>
-            <div>
-              <label>&nbsp;</label>
-              <div class="btn-row">
-                <button id="initBtn" class="primary">Enable Camera</button>
-                <button id="stampBtn" class="success">Stamp &amp; Send</button>
-                <!-- NEW: explicit download button -->
-                <button id="downloadBtn" class="ghost" disabled>Download stamped image</button>
-              </div>
-              <div class="inline" style="margin-top:8px">
-                <input type="checkbox" id="gmailToggle" />
-                <label for="gmailToggle" class="hint">Prefill recipient in Gmail (attach manually)</label>
-              </div>
-            </div>
-          </div>
-
-          <p class="hint">
-            • If camera is enabled, Stamp &amp; Send uses the live camera frame (even if a file was previously chosen).<br>
-            • Web Share can’t prefill the To field. Turn on “Prefill in Gmail” to open Gmail with the teacher’s email/subject/body, and we’ll download the stamped image for quick attachment.<br>
-            • You can also tap “Download stamped image” after stamping to save it directly.
-          </p>
-
-          <div id="toast" class="toast" role="status"></div>
-        </div>
-      </section>
-
-      <!-- RIGHT: live preview -->
-      <section class="card">
-        <div class="media-wrap">
-          <video id="video" class="media" playsinline autoplay muted></video>
-          <img id="preview" class="media" alt="Preview appears here after capture" style="display:none;" />
-          <div id="overlayText" class="stamp-overlay" aria-hidden="true"></div>
-        </div>
-      </section>
+<div class="app">
+  <header>
+    <h2>Pukekohe High School — Photo Stamper</h2>
+    <div class="sub">
+      Stamp Student • Teacher • Pukekohe High School • Date/Time (+ optional Subject).
+      One button to capture or use a selected file and send.
     </div>
+  </header>
+
+  <div class="layout">
+    <!-- LEFT: controls -->
+    <section class="card">
+      <div class="fields">
+        <div>
+          <label for="name">Student Name</label>
+          <input id="name" placeholder="e.g., Alex Smith" />
+        </div>
+
+        <div class="row row--2">
+          <div>
+            <label for="teacherSelect">Teacher</label>
+            <select id="teacherSelect"></select>
+          </div>
+          <div>
+            <label for="teacherEmail">Teacher Email</label>
+            <input id="teacherEmail" type="email" />
+          </div>
+        </div>
+
+        <div>
+          <label for="subject">Optional Subject</label>
+          <input id="subject" placeholder="e.g., Science Project" />
+        </div>
+
+        <div class="row row--2">
+          <div>
+            <label for="fileInput">Use a photo from device (optional)</label>
+            <input id="fileInput" type="file" accept="image/*" />
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <div class="btn-row">
+              <button id="initBtn" class="primary">Enable Camera</button>
+              <button id="stampBtn" class="success">Stamp &amp; Send</button>
+              <!-- explicit download button -->
+              <button id="downloadBtn" class="ghost" disabled>Download stamped image</button>
+            </div>
+            <div class="inline" style="margin-top:8px">
+              <input type="checkbox" id="gmailToggle" />
+              <label for="gmailToggle" class="hint">
+                Prefill recipient in Gmail (attach manually)
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <p class="hint">
+          • If camera is enabled, Stamp &amp; Send uses the live camera frame (even if a file was previously chosen).<br>
+          • Web Share can’t prefill the To field. Turn on “Prefill in Gmail” to open Gmail with the teacher’s email/subject/body, and we’ll download the stamped image for quick attachment.<br>
+          • You can also tap “Download stamped image” after stamping to save it directly.
+        </p>
+
+        <div id="toast" class="toast" role="status"></div>
+      </div>
+    </section>
+
+    <!-- RIGHT: live preview -->
+    <section class="card">
+      <div class="media-wrap">
+        <video id="video" class="media" playsinline autoplay muted></video>
+        <img id="preview" class="media" alt="Preview appears here after capture" style="display:none;" />
+        <div id="overlayText" class="stamp-overlay" aria-hidden="true"></div>
+      </div>
+    </section>
   </div>
+</div>
 
-  <!-- Hidden canvas for processing -->
-  <canvas id="canvas" style="display:none;"></canvas>
+<!-- Hidden canvas for processing -->
+<canvas id="canvas" style="display:none;"></canvas>
 
-  <script>
-    const TEACHERS = [
-      { name: 'Mr Reynolds', email: 'ry@pukekohehigh.school.nz' },
-      { name: 'Mrs Devaney', email: 'dvm@pukekohehigh.school.nz' },
-      { name: 'Mr Nicholls', email: 'ncc@pukekohehigh.school.nz' },
-      { name: 'Mr Knapman', email: 'kpc@pukekohehigh.school.nz' },
-      { name: 'Mr Ranson', email: 'rnr@pukekohehigh.school.nz' }
-    ];
+<script>
+  const TEACHERS = [
+    { name: 'Mr Reynolds', email: 'ry@pukekohehigh.school.nz' },
+    { name: 'Mrs Devaney', email: 'dvm@pukekohehigh.school.nz' },
+    { name: 'Mr Nicholls', email: 'ncc@pukekohehigh.school.nz' },
+    { name: 'Mr Knapman', email: 'kpc@pukekohehigh.school.nz' },
+    { name: 'Mr Ranson', email: 'rnr@pukekohehigh.school.nz' }
+  ];
 
-    // Refs
-    const initBtn = document.getElementById('initBtn');
-    const stampBtn = document.getElementById('stampBtn');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const teacherSelect = document.getElementById('teacherSelect');
-    const teacherEmail = document.getElementById('teacherEmail');
-    const nameInput = document.getElementById('name');
-    const subjectInput = document.getElementById('subject');
-    const fileInput = document.getElementById('fileInput');
-    const gmailToggle = document.getElementById('gmailToggle');
+  // Refs
+  const initBtn = document.getElementById('initBtn');
+  const stampBtn = document.getElementById('stampBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const teacherSelect = document.getElementById('teacherSelect');
+  const teacherEmail = document.getElementById('teacherEmail');
+  const nameInput = document.getElementById('name');
+  const subjectInput = document.getElementById('subject');
+  const fileInput = document.getElementById('fileInput');
+  const gmailToggle = document.getElementById('gmailToggle');
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const preview = document.getElementById('preview');
+  const toast = document.getElementById('toast');
+  const overlayText = document.getElementById('overlayText');
 
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const preview = document.getElementById('preview');
-    const toast = document.getElementById('toast');
-    const overlayText = document.getElementById('overlayText');
+  let stream = null;
+  let stampedFile = null;
 
-    let stream = null;
-    let stampedFile = null;
+  // -------- Helpers for filename ----------
+  function pad2(n){
+    return String(n).padStart(2,'0');
+  }
 
-    // -------- Helpers for filename ----------
-    function pad2(n){ return String(n).padStart(2,'0'); }
-    function dateStamp(){
-      const d = new Date();
-      return `${d.getFullYear()}${pad2(d.getMonth()+1)}${pad2(d.getDate())}_${pad2(d.getHours())}${pad2(d.getMinutes())}`;
-    }
-    function cleanName(s){
-      return (s||'').trim().replace(/\s+/g,'_').replace(/[^A-Za-z0-9_-]/g,'');
-    }
-    function teacherCodeFromEmail(email){
-      const user = (email||'').split('@')[0] || '';
-      return user.replace(/[^A-Za-z]/g,'') || 'nocode';
-    }
-    function buildFilename(){
-      const student = cleanName(nameInput.value) || 'Unknown';
-      const tcode = teacherCodeFromEmail(teacherEmail.value);
-      return `PHS_${student}_${tcode}_${dateStamp()}.jpg`;
-    }
+  function dateStamp(){
+    const d = new Date();
+    return `${d.getFullYear()}${pad2(d.getMonth()+1)}${pad2(d.getDate())}_${pad2(d.getHours())}${pad2(d.getMinutes())}`;
+  }
 
-    // UI helpers
-    function showToast(text, ok=true){
-      toast.textContent = text;
-      toast.classList.toggle('error', !ok);
-      toast.style.display = 'block';
-      clearTimeout(showToast._t);
-      showToast._t = setTimeout(()=> toast.style.display='none', 3600);
-    }
+  function cleanName(s){
+    return (s||'')
+      .trim()
+      .replace(/\s+/g,'_')
+      .replace(/[^A-Za-z0-9_-]/g,'');
+  }
 
-    // Teachers UI
-    teacherSelect.innerHTML = TEACHERS.map((t,i)=>`<option value="${i}">${t.name}</option>`).join('');
-    teacherEmail.value = TEACHERS[0].email;
-    teacherSelect.addEventListener('change',()=>teacherEmail.value=TEACHERS[teacherSelect.value].email);
+  function teacherCodeFromEmail(email){
+    const user = (email||'').split('@')[0] || '';
+    return user.replace(/[^A-Za-z]/g,'') || 'nocode';
+  }
 
-    // Camera
-    async function initCamera(){
-      try{
-        stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ ideal:'environment' } }, audio:false });
-        video.srcObject = stream;
-        preview.style.display = 'none';
-        video.style.display = 'block';
-        showToast("Camera ready");
-      }catch(e){
-        console.error(e);
-        showToast("Camera access denied", false);
-      }
-    }
+  function buildFilename(){
+    const student = cleanName(nameInput.value) || 'Unknown';
+    const tcode = teacherCodeFromEmail(teacherEmail.value);
+    return `PHS_${student}_${tcode}_${dateStamp()}.jpg`;
+  }
 
-    // Stamp text
-    function formatTimestamp(){
-      const d=new Date();
-      return d.toLocaleString([], {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
-    }
-    function buildStampLines(){
-      const name=(nameInput.value||'').trim();
-      const teacher=TEACHERS[teacherSelect.value]?.name || '';
-      const subj=(subjectInput.value||'').trim();
-      const ts=formatTimestamp();
-      return [
-        [name,teacher].filter(Boolean).join(' • '),
-        'Pukekohe High School • '+ts,
-        subj?subj:null
-      ].filter(Boolean);
-    }
-    function updateOverlay(){ overlayText.textContent = buildStampLines().join('\n'); }
+  // UI helpers
+  function showToast(text, ok=true){
+    toast.textContent = text;
+    toast.classList.toggle('error', !ok);
+    toast.style.display = 'block';
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(()=> toast.style.display='none', 3600);
+  }
 
-    // Draw
-    function drawStamp(ctx, lines, w){
-      const margin = Math.max(12, Math.round(w * 0.012));
-      const fontSize = Math.max(18, Math.round(w * 0.03));
-      const lineH = Math.round(fontSize * 1.25);
-      const padX = Math.round(fontSize * 0.6);
-      const padY = Math.round(fontSize * 0.5);
+  // Teachers UI
+  teacherSelect.innerHTML = TEACHERS
+    .map((t,i)=>`<option value="${i}">${t.name}</option>`)
+    .join('');
+  teacherEmail.value = TEACHERS[0].email;
+  teacherSelect.addEventListener('change',()=>teacherEmail.value=TEACHERS[teacherSelect.value].email);
 
-      ctx.font = `600 ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
-      ctx.textBaseline = 'top';
-      ctx.textAlign = 'right';
-
-      let maxWidth = 0;
-      for(const l of lines){ maxWidth = Math.max(maxWidth, ctx.measureText(l).width); }
-      const boxW = Math.ceil(maxWidth + padX*2);
-      const boxH = Math.ceil(lines.length * lineH + padY*2);
-
-      const x = w - margin - boxW;
-      const y = margin;
-
-      ctx.fillStyle = 'rgba(0,0,0,0.55)';
-      ctx.fillRect(x, y, boxW, boxH);
-
-      ctx.fillStyle = '#fff';
-      let ty = y + padY;
-      const tx = x + boxW - padX;
-      for(const l of lines){ ctx.fillText(l, tx, ty); ty += lineH; }
-    }
-
-    // Load from file (robust)
-    function isHeic(file){
-      const name = (file?.name || '').toLowerCase();
-      return file?.type === 'image/heic' || file?.type === 'image/heif' || name.endsWith('.heic') || name.endsWith('.heif');
-    }
-    function downscaleDims(nw, nh, maxW = 1280){
-      const scale = Math.min(1, maxW / nw);
-      return { w: Math.round(nw * scale), h: Math.round(nh * scale) };
-    }
-    async function loadImageFromFile(file){
-      if (!file) throw new Error('no-file');
-      if (isHeic(file)) throw new Error('heic-unsupported');
-      const blobURL = URL.createObjectURL(file);
-      try {
-        if ('createImageBitmap' in window) {
-          const bmp = await createImageBitmap(file);
-          return { type: 'bitmap', bmp, revoke: () => URL.revokeObjectURL(blobURL) };
-        } else {
-          const img = await new Promise((resolve, reject) => {
-            const i = new Image();
-            i.onload = () => resolve(i);
-            i.onerror = () => reject(new Error('decode-failed'));
-            i.src = blobURL;
-          });
-          return { type: 'image', img, revoke: () => URL.revokeObjectURL(blobURL) };
-        }
-      } catch (e) {
-        URL.revokeObjectURL(blobURL);
-        throw e;
-      }
-    }
-
-    async function stampFromFile(file){
-      const loaded = await loadImageFromFile(file);
-      try {
-        let w, h, ctx;
-        if (loaded.type === 'bitmap') {
-          const { width: nw, height: nh } = loaded.bmp;
-          ({ w, h } = downscaleDims(nw, nh));
-          canvas.width = w; canvas.height = h;
-          ctx = canvas.getContext('2d');
-          ctx.drawImage(loaded.bmp, 0, 0, w, h);
-        } else {
-          const nw = loaded.img.naturalWidth, nh = loaded.img.naturalHeight;
-          ({ w, h } = downscaleDims(nw, nh));
-          canvas.width = w; canvas.height = h;
-          ctx = canvas.getContext('2d');
-          ctx.drawImage(loaded.img, 0, 0, w, h);
-        }
-        drawStamp(ctx, buildStampLines(), canvas.width);
-
-        const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.9));
-        stampedFile = new File([blob], buildFilename(), { type:'image/jpeg' });
-
-        const dataURL = URL.createObjectURL(stampedFile);
-        preview.src = dataURL;
-        preview.style.display = 'block';
-        video.style.display = 'none';
-        setTimeout(()=>URL.revokeObjectURL(dataURL), 0);
-
-        if (downloadBtn) downloadBtn.disabled = false;
-      } finally { try { loaded.revoke?.(); } catch {} }
-    }
-
-    async function stampFromVideoFrame(){
-      const vw = video.videoWidth, vh = video.videoHeight;
-      if(!vw || !vh) throw new Error('camera-not-ready');
-
-      const off = document.createElement('canvas');
-      off.width = vw; off.height = vh;
-      off.getContext('2d').drawImage(video, 0, 0);
-
-      const img = new Image();
-      await new Promise((resolve, reject) => {
-        img.onload = resolve;
-        img.onerror = () => reject(new Error('decode-failed'));
-        img.src = off.toDataURL('image/jpeg', 0.95);
+  // Camera
+  async function initCamera(){
+    try{
+      stream = await navigator.mediaDevices.getUserMedia({
+        video:{ facingMode:{ ideal:'environment' } },
+        audio:false
       });
-
-      const { w, h } = downscaleDims(img.naturalWidth, img.naturalHeight);
-      canvas.width = w; canvas.height = h;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, w, h);
-      drawStamp(ctx, buildStampLines(), canvas.width);
-
-      const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.9));
-      stampedFile = new File([blob], buildFilename(), { type:'image/jpeg' });
-
-      const dataURL = URL.createObjectURL(stampedFile);
-      preview.src = dataURL;
-      preview.style.display = 'block';
-      video.style.display = 'none';
-      setTimeout(()=>URL.revokeObjectURL(dataURL), 0);
-
-      if (downloadBtn) downloadBtn.disabled = false;
+      video.srcObject = stream;
+      preview.style.display = 'none';
+      video.style.display = 'block';
+      showToast("Camera ready");
+    }catch(e){
+      console.error(e);
+      showToast("Camera access denied", false);
     }
+  }
 
-    // Share vs Gmail compose
-    function buildGmailComposeURL({to, subject, body}){
-      const params = new URLSearchParams();
-      if (to) params.set('to', to);
-      if (subject) params.set('su', subject);
-      if (body) params.set('body', body);
-      params.set('view','cm'); params.set('fs','1');
-      return `https://mail.google.com/mail/?${params.toString()}`;
-    }
-    function downloadStampedIfAny(){
-      if (!stampedFile) return;
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(stampedFile);
-      a.download = stampedFile.name;
-      document.body.appendChild(a); a.click();
-      setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 0);
-    }
-
-    async function sharePhoto(){
-      if(!stampedFile) return showToast("No file", false);
-
-      const teacherObj = TEACHERS[teacherSelect.value] || {name:'',email:''};
-      const body = `Student: ${nameInput.value || ''}
-Teacher: ${teacherObj.name} (${teacherEmail.value || ''})
-Subject: ${subjectInput.value || '-'}
-Time: ${formatTimestamp()}`;
-      const subject = `printme — ${stampedFile.name}`;
-
-      if (gmailToggle.checked) {
-        const url = buildGmailComposeURL({ to: teacherEmail.value || '', subject, body });
-        window.open(url, '_blank', 'noopener,noreferrer');
-        downloadStampedIfAny();
-        try { await navigator.clipboard.writeText(teacherEmail.value || ''); } catch {}
-        showToast("Opened Gmail and downloaded the stamped image.");
-        return;
-      }
-
-      try{
-        if(navigator.canShare && navigator.canShare({ files:[stampedFile] })){
-          await navigator.share({ files:[stampedFile], title: subject, text: body });
-          showToast("Shared via app");
-        }else{
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(stampedFile);
-          a.download = stampedFile.name;
-          document.body.appendChild(a); a.click();
-          setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 0);
-          showToast("Downloaded (share not supported)");
-        }
-      }catch(e){
-        console.warn(e);
-        if(!String(e).includes('AbortError')) showToast("Share cancelled or unsupported", false);
-      }
-    }
-
-    // MAIN flow: prefer camera if ready (ignores stale file selections)
-    async function stampAndSend(){
-      try{
-        const cameraReady = !!(stream && video.videoWidth && video.videoHeight && video.style.display !== 'none');
-        if (cameraReady) {
-          await stampFromVideoFrame();           // always use current camera frame when camera is on
-        } else if (fileInput.files && fileInput.files[0]) {
-          await stampFromFile(fileInput.files[0]); // use selected file if no camera
-        } else if (stream) {
-          await stampFromVideoFrame();            // camera on but not ready dimensions → try anyway
-        } else {
-          showToast("Enable camera or choose a file first", false);
-          return;
-        }
-
-        await sharePhoto();
-      }catch(e){
-        const msg = String(e && e.message || e);
-        if (msg === 'heic-unsupported') {
-          showToast("This image is HEIC/HEIF. Use the camera or convert to JPG/PNG.", false);
-        } else if (msg === 'camera-not-ready') {
-          showToast("Camera not ready yet — tap Enable Camera or choose a file.", false);
-        } else if (msg === 'decode-failed') {
-          showToast("Couldn’t read that image. Try a JPG/PNG.", false);
-        } else {
-          console.error(e);
-          showToast("Failed to stamp", false);
-        }
-      } finally {
-        // clear stale file so it won't be reused next time
-        try { fileInput.value = ''; } catch {}
-      }
-    }
-
-    // Events
-    initBtn.addEventListener('click', initCamera);
-    stampBtn.addEventListener('click', stampAndSend);
-    downloadBtn?.addEventListener('click', () => {
-      if (!stampedFile) {
-        showToast("No stamped image yet", false);
-        return;
-      }
-      downloadStampedIfAny();
-      showToast("Downloaded stamped image");
+  // Stamp text
+  function formatTimestamp(){
+    const d=new Date();
+    return d.toLocaleString([], {
+      year:'numeric',
+      month:'2-digit',
+      day:'2-digit',
+      hour:'2-digit',
+      minute:'2-digit'
     });
+  }
 
-    [nameInput, subjectInput, teacherEmail, teacherSelect].forEach(el=>{
-      el.addEventListener('input', updateOverlay);
-      el.addEventListener('change', updateOverlay);
-    });
-    updateOverlay(); setInterval(updateOverlay, 5000);
+  function buildStampLines(){
+    const name=(nameInput.value||'').trim();
+    const teacher=TEACHERS[teacherSelect.value]?.name || '';
+    const subj=(subjectInput.value||'').trim();
+    const ts=formatTimestamp();
+    return [
+      [name,teacher].filter(Boolean).join(' • '),
+      'Pukekohe High School • '+ts,
+      subj?subj:null
+    ].filter(Boolean);
+  }
 
-    // --- Service worker registration (PWA) ---
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', async () => {
-        try {
-          const reg = await navigator.serviceWorker.register('./service-worker.js');
-          if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-          reg.addEventListener('updatefound', () => {
-            const sw = reg.installing;
-            sw?.addEventListener('statechange', () => {
-              if (sw.state === 'installed' && navigator.serviceWorker.controller) {
-                showToast('Update available. Reload for latest.');
-              }
-            });
-          });
-        } catch (err) {
-          console.warn('Service worker registration failed', err);
-        }
-      });
+  function updateOverlay(){
+    overlayText.textContent = buildStampLines().join('\n');
+  }
+
+  // Draw
+  function drawStamp(ctx, lines, w){
+    const margin = Math.max(12, Math.round(w * 0.012));
+    const fontSize = Math.max(18, Math.round(w * 0.03));
+    const lineH = Math.round(fontSize * 1.25);
+    const padX = Math.round(fontSize * 0.6);
+    const padY = Math.round(fontSize * 0.5);
+
+    ctx.font = `600 ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'right';
+
+    let maxWidth = 0;
+    for(const l of lines){
+      maxWidth = Math.max(maxWidth, ctx.measureText(l).width);
     }
-  </script>
-</body>
-</html>
+
+    const boxW = Math.ceil(maxWidth + padX*2);
+    const boxH = Math.ceil(lines.length * lineH + padY*2);
+    const x = w - margin - boxW;
+    const y = margin;
+
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.fillRect(x, y, boxW, boxH);
+
+    ctx.fillStyle = '#fff';
+    let ty = y + padY;
+    const tx = x + boxW - padX;
+    for(const l of lines){
+      ctx.fillText(l, tx, ty);
+      ty += lineH;
+    }
+  }
+
+  // Load from file (
