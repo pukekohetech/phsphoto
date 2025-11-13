@@ -1,12 +1,13 @@
-/* simple service worker to cache app shell */
+/* Simple service worker to cache app shell */
 const CACHE_VERSION = 'phs-stamper-v1.0.0';
 const APP_SHELL = [
   './',
-  './index.html',
-  './manifest.webmanifest',
-  './icon-192.png',
-  './icon-512.png',
-  './service-worker.js'
+  './index.html?v=1.0.0',
+  './manifest.webmanifest?v=1.0.0',
+  './icon-192.png?v=1.0.0',
+  './icon-512.png?v=1.0.0',
+  './phs_crest.png?v=1.0.0',
+  './service-worker.js?v=1.0.0'
 ];
 
 self.addEventListener('install', (event) => {
@@ -39,10 +40,10 @@ self.addEventListener('fetch', (event) => {
     caches.match(req).then((cached) => {
       if (cached) return cached;
       return fetch(req).then((res) => {
-        const clone = res.clone();
-        caches.open(CACHE_VERSION).then((cache) => {
-          cache.put(req, clone);
-        });
+        if (res.ok && req.method === 'GET') {
+          const clone = res.clone();
+          caches.open(CACHE_VERSION).then((cache) => cache.put(req, clone));
+        }
         return res;
       }).catch(() => caches.match('./'));
     })
