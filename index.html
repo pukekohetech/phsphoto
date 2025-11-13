@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pukekohe HS • Camera → Stamp → Share</title>
-
   <!-- PWA meta -->
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#2563eb" />
@@ -14,113 +13,117 @@
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="icon" sizes="192x192" href="icon-192.png">
   <link rel="icon" sizes="512x512" href="icon-512.png">
-
   <style>
-    :root { color-scheme: light dark; --accent:#2563eb; --ok:#16a34a; --err:#dc2626; --bg:canvas; --fg:canvastext; --border:#8885; }
+    :root { color-scheme: light dark; --accent:#2563eb; --ok:#16a34a; --err:#dc2626; --bg: canvas; --fg: canvastext; --border:#8885; }
     html[data-theme="light"] { color-scheme: light; } html[data-theme="dark"] { color-scheme: dark; }
     * { box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Arial; margin: 0; padding: 12px; display: grid; gap: 12px; background: var(--bg); color: var(--fg); }
-    header { display: grid; gap: 8px; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Arial; margin: 0; padding: 16px; display: grid; gap: 16px; background: var(--bg); color: var(--fg); }
+    header { display: grid; gap: 10px; }
     h1 { font-size: 1.1rem; margin: 0; }
-    .grid { display: grid; gap: 12px; }
-    .row { display: grid; gap: 8px; }
+    .grid { display: grid; gap: 14px; }
+    .row { display: grid; gap: 10px; }
     @media (min-width: 720px) { .row--2 { grid-template-columns: 1fr 1fr; } }
-    .media { width: 360px; max-width: 100%; border-radius: 12px; background: #000; box-shadow: 0 4px 12px rgba(0,0,0,.1); }
-    label { font-size: .9rem; opacity: .9; display: block; margin-bottom: 4px; }
-    input, button, select { font: inherit; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: inherit; color: inherit; }
-    input:invalid { border-color: var(--err); }
-    input:focus, select:focus, button:focus { outline: 2px solid color-mix(in oklab, var(--accent) 50%, transparent); outline-offset: 1px; }
-    button { min-height: 48px; }
+    .media { width: 360px; max-width: 100%; border-radius: 14px; background: #000; box-shadow: 0 6px 18px rgba(0,0,0,.12); }
+    label { font-size: .95rem; opacity: .95; display: block; margin-bottom: 6px; }
+    input, button, select { font: inherit; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); background: inherit; color: inherit; }
+    input:focus, select:focus, button:focus { outline: 3px solid color-mix(in oklab, var(--accent) 40%, transparent); outline-offset: 2px; }
     button.primary { background: var(--accent); color: white; border: none; }
-    button[disabled] { opacity: .5; cursor: not-allowed; }
-    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
-    .hint { font-size: .85rem; opacity: .8; }
-    .toast { padding: 8px 12px; border-radius: 8px; background: var(--ok); color: white; display: none; max-width: 640px; }
+    button[disabled] { opacity: .6; cursor: not-allowed; }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .hint { font-size: .9rem; opacity: .85; }
+    .toast { padding: 10px 12px; border-radius: 10px; background: var(--ok); color: white; display: none; max-width: 720px; }
     .toast.error { background: var(--err); }
-    ul.teachers { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
-    ul.teachers li { display: flex; justify-content: space-between; gap: 6px; font-size: .9rem; }
+    ul.teachers { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+    ul.teachers li { display: flex; justify-content: space-between; gap: 8px; font-size: .95rem; }
     code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-    .panel { border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
-    .pill { font-size: .75rem; padding: 3px 6px; border-radius: 999px; background: #8882; }
-    .stack { display: grid; gap: 6px; }
-    .muted { opacity: .6; }
-    .inline { display: inline-flex; align-items: center; gap: 6px; }
+    .panel { border: 1px solid var(--border); border-radius: 14px; padding: 14px; }
+    .pill { font-size: .8rem; padding: 4px 8px; border-radius: 999px; background: #8882; }
+    .stack { display: grid; gap: 8px; }
+    .muted { opacity: .7; }
+    .inline { display: inline-flex; align-items: center; gap: 8px; }
     .overlay-wrap { position: relative; display: inline-block; }
     .stamp-overlay {
-      position: absolute; top: 8px; right: 8px; padding: 6px 8px; border-radius: 8px;
-      background: rgba(0,0,0,.6); color: #fff; font-weight: 600; font-size: 11px; line-height: 1.2;
-      pointer-events: none; white-space: pre-line; max-width: min(90vw, 60%); text-align: right;
+      position: absolute; top: 10px; right: 10px;
+      padding: 6px 10px; border-radius: 10px;
+      background: rgba(0,0,0,.55); color: #fff;
+      font-weight: 600; font-size: 12px; line-height: 1.25;
+      pointer-events: none; white-space: pre-line; max-width: min(92vw, 70%); text-align: right;
     }
     .danger { background: var(--err); color: #fff; border: none; }
     .success { background: var(--ok); color: #fff; border: none; }
-    .small { font-size: .8rem; }
+    .small { font-size: .85rem; }
     .ghost { background: transparent; border: 1px dashed var(--border); }
-    .menu { position: relative; }
-    .menu-content { display: none; position: absolute; top: 100%; right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px; gap: 4px; z-index: 10; }
-    .menu:hover .menu-content { display: grid; }
   </style>
 </head>
 <body>
   <header>
-    <h1>Pukekohe High School — Photo Stamper</h1>
+    <h1>Pukekohe High School — Photo evidence stamper</h1>
     <div class="btn-row">
-      <button id="captureShareBtn" class="primary" disabled>Capture & Share</button>
-      <div class="menu">
-        <button class="ghost">More</button>
-        <div class="menu-content">
-          <button id="themeBtn" class="ghost" aria-label="Toggle theme">🌓 Theme</button>
-          <button id="installBtn" class="ghost" style="display:none;" aria-label="Install app">⬇️ Install</button>
-          <button id="helpBtn" class="ghost" aria-label="Show tips">Tips</button>
-        </div>
-      </div>
+      <button id="initBtn" class="primary">Enable Camera</button>
+      <button id="helpBtn" title="Show tips">Tips</button>
+      <button id="themeBtn" class="ghost" title="Toggle theme">🌓 Theme</button>
+      <button id="installBtn" class="ghost" style="display:none;">⬇️ Install</button>
     </div>
-    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <div id="toast" class="toast" role="status"></div>
   </header>
-
   <section class="grid">
     <div class="row row--2">
       <div class="panel stack">
+        <div class="stack">
+          <label for="name">Student name</label>
+          <input id="name" list="recentStudents" placeholder="e.g., Alex Smith" autocomplete="name" />
+          <datalist id="recentStudents"></datalist>
+        </div>
         <div class="row row--2">
           <div class="stack">
-            <label for="name">Student name</label>
-            <input id="name" list="recentStudents" placeholder="e.g., Alex Smith" autocomplete="name" required />
-            <datalist id="recentStudents"></datalist>
+            <label for="teacherSelect">Select teacher</label>
+            <select id="teacherSelect"></select>
           </div>
           <div class="stack">
-            <label for="teacherSelect">Teacher</label>
-            <select id="teacherSelect" required></select>
+            <label for="teacherEmail">Teacher email</label>
+            <input id="teacherEmail" type="email" placeholder="teacher@pukekohehigh.school.nz" />
           </div>
         </div>
-
-        <div class="stack" id="customTeacherGroup" style="display:none;">
-          <label for="customTeacherName">Custom teacher name</label>
-          <input id="customTeacherName" placeholder="e.g., Ms Taylor" />
-          <input id="teacherEmail" type="email" placeholder="teacher@pukekohehigh.school.nz" />
+        <div id="customTeacherGroup" class="row row--2" style="display:none;">
+          <div class="stack">
+            <label for="customTeacherName">Custom teacher name</label>
+            <input id="customTeacherName" placeholder="e.g., Ms Taylor" />
+          </div>
+          <div class="stack">
+            <label>&nbsp;</label>
+            <button id="copyEmailBtn">Copy email</button>
+          </div>
         </div>
-
-        <details class="stack">
-          <summary class="small">Add subject (optional)</summary>
+        <div class="stack">
+          <label for="subject">Subject / Project (optional)</label>
           <input id="subject" placeholder="e.g., Food Tech — Burger Build" />
-        </details>
-
+        </div>
+        <div class="row row--2">
+          <div class="stack">
+            <label for="fileInput">Choose a photo (optional)</label>
+            <input id="fileInput" type="file" accept="image/*" />
+          </div>
+          <div class="stack">
+            <label>&nbsp;</label>
+            <button id="fileStampBtn">Choose & Stamp (File)</button>
+          </div>
+        </div>
         <div class="btn-row">
-          <button id="initCameraBtn" class="ghost">Enable Camera</button>
-          <button id="shootBtn" class="primary" disabled>Capture</button>
-          <button id="uploadBtn" class="ghost">Upload & Stamp</button>
+          <button id="shootBtn" class="primary" disabled>Capture & Stamp (Camera)</button>
           <button id="shareBtn" class="success" disabled>Share</button>
+          <button id="downloadBtn" class="ghost" disabled>Download</button>
           <button id="clearBtn" class="danger">Clear</button>
         </div>
-
-        <p class="hint small">
-          Stamp appears top-right: <em>Student • Teacher</em>, <em>Pukekohe High School • date/time</em>, <em>Subject (if added)</em>.
-          Share includes teacher’s email in the body for easy pasting.
+        <p class="hint">
+          Stamp appears at the <strong>top-right</strong> on up to <strong>three lines</strong>:
+          <br><em>Student • Teacher</em><br><em>Pukekohe High School • date/time</em><br><em>Subject/Project (optional)</em>.
+          Share Sheet can’t pre-fill the recipient; we copy the teacher’s email for quick paste and include it in the body.
         </p>
       </div>
-
       <div class="panel stack">
         <div class="inline">
           <span class="pill">Preview</span>
-          <span class="small muted">(scaled; final stamp on saved image)</span>
+          <span class="small muted">(scaled for speed; final stamp is applied to the saved image)</span>
         </div>
         <div class="overlay-wrap">
           <video id="video" class="media" playsinline autoplay muted></video>
@@ -130,27 +133,27 @@
         <img id="preview" class="media" alt="Preview appears here after capture" style="display:none;" />
       </div>
     </div>
-
     <section class="panel">
-      <h3 class="inline">Teachers <span class="pill muted">reference</span></h3>
+      <h3 class="inline">Relevant teachers <span class="pill muted">quick reference</span></h3>
       <ul id="teacherList" class="teachers"></ul>
     </section>
   </section>
-
   <dialog id="tipsDialog">
-    <form method="dialog" class="stack" style="min-width: min(90vw, 600px);">
+    <form method="dialog" class="stack" style="min-width: min(92vw, 640px);">
       <h3>Tips</h3>
       <ul class="stack small">
-        <li>Best on mobile Safari/Chrome for sharing.</li>
-        <li>Double-tap video to capture.</li>
-        <li>Your name and teacher are saved for next time.</li>
-        <li>Keyboard: <strong>Enter</strong> = Capture, <strong>Ctrl+S</strong> = Share.</li>
+        <li>Best on mobile Safari/Chrome (Share Sheet attaches files there).</li>
+        <li>Pick from Files/Photos or capture with the camera.</li>
+        <li>We remember your last student/teacher and keep a short student history.</li>
+        <li>Keyboard: <strong>Enter</strong> = Capture & Stamp, <strong>Ctrl+S</strong> = Share (or Download).</li>
       </ul>
-      <button value="cancel">Close</button>
+      <div class="btn-row">
+        <button value="cancel">Close</button>
+      </div>
     </form>
   </dialog>
-
   <script>
+    // 🔧 Edit this list to your real staff
     const TEACHERS = [
       { name: 'Mr Reynolds', email: 'ry@pukekohehigh.school.nz' },
       { name: 'Mrs Devaney', email: 'dvm@pukekohehigh.school.nz' },
@@ -158,53 +161,56 @@
       { name: 'Mr Knapman', email: 'kpc@pukekohehigh.school.nz' },
       { name: 'Mr Ranson', email: 'rnr@pukekohehigh.school.nz' }
     ];
-
     // UI refs
-    const initCameraBtn = document.getElementById('initCameraBtn');
-    const captureShareBtn = document.getElementById('captureShareBtn');
-    const shootBtn = document.getElementById('shootBtn');
-    const uploadBtn = document.getElementById('uploadBtn');
-    const shareBtn = document.getElementById('shareBtn');
-    const clearBtn = document.getElementById('clearBtn');
+    const initBtn = document.getElementById('initBtn');
     const helpBtn = document.getElementById('helpBtn');
     const themeBtn = document.getElementById('themeBtn');
     const installBtn = document.getElementById('installBtn');
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const preview = document.getElementById('preview');
+    const shootBtn = document.getElementById('shootBtn');
+    const shareBtn = document.getElementById('shareBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const clearBtn = document.getElementById('clearBtn');
     const nameInput = document.getElementById('name');
     const subjectInput = document.getElementById('subject');
     const teacherSelect = document.getElementById('teacherSelect');
     const teacherEmail = document.getElementById('teacherEmail');
-    const customTeacherName = document.getElementById('customTeacherName');
-    const customTeacherGroup = document.getElementById('customTeacherGroup');
+    const copyEmailBtn = document.getElementById('copyEmailBtn');
     const teacherList = document.getElementById('teacherList');
+    const fileInput = document.getElementById('fileInput');
+    const fileStampBtn = document.getElementById('fileStampBtn');
     const toast = document.getElementById('toast');
     const overlayText = document.getElementById('overlayText');
+    const customTeacherGroup = document.getElementById('customTeacherGroup');
+    const customTeacherName = document.getElementById('customTeacherName');
     const tipsDialog = document.getElementById('tipsDialog');
     const recentStudentsDL = document.getElementById('recentStudents');
-
     // State
     let stream, stampedFile, lastMeta = null;
     let logoImg = new Image(), logoReady = false;
     let deferredPrompt = null;
-
-    // Helpers
+    // Try to preload crest; optional
+    (function preloadLogo(){
+      logoImg.onload = () => { logoReady = true; };
+      logoImg.onerror = () => { logoReady = false; };
+      logoImg.src = 'phs_crest.png';
+    })();
+    // --- Helpers ---
     function showToast(text, ok = true) {
       toast.textContent = text;
       toast.classList.toggle('error', !ok);
       toast.style.display = 'block';
-      setTimeout(() => toast.style.display = 'none', 3000);
+      setTimeout(() => toast.style.display = 'none', 4500);
     }
-
     function getTheme() { return localStorage.getItem('phs_theme') || 'auto'; }
-    function setTheme(mode) { document.documentElement.setAttribute('data-theme', mode); localStorage.setItem('phs_theme', mode); }
+    function setTheme(mode) { document.documentElement.setAttribute('data-theme', mode); try { localStorage.setItem('phs_theme', mode); } catch {} }
     function toggleTheme() {
       const current = getTheme();
       const next = current === 'dark' ? 'light' : current === 'light' ? 'auto' : 'dark';
       setTheme(next); showToast(`Theme: ${next}`);
     }
-
     function persist() {
       const data = {
         student: nameInput.value || '',
@@ -213,67 +219,65 @@
         customTeacherName: customTeacherName.value || '',
         subject: subjectInput.value || ''
       };
-      localStorage.setItem('printme_pref', JSON.stringify(data));
+      try { localStorage.setItem('printme_pref', JSON.stringify(data)); } catch {}
     }
     function restore() {
-      const data = JSON.parse(localStorage.getItem('printme_pref') || '{}');
-      if (data.student) nameInput.value = data.student;
-      if (typeof data.teacherIdx !== 'undefined') teacherSelect.value = data.teacherIdx;
-      if (data.teacherEmail) teacherEmail.value = data.teacherEmail;
-      if (data.customTeacherName) customTeacherName.value = data.customTeacherName;
-      if (data.subject) subjectInput.value = data.subject;
-      handleTeacherSelectChange();
+      try {
+        const data = JSON.parse(localStorage.getItem('printme_pref') || '{}');
+        if (data.student) nameInput.value = data.student;
+        if (typeof data.teacherIdx !== 'undefined') teacherSelect.value = data.teacherIdx;
+        if (data.teacherEmail) teacherEmail.value = data.teacherEmail;
+        if (data.customTeacherName) customTeacherName.value = data.customTeacherName;
+        if (data.subject) subjectInput.value = data.subject;
+        handleTeacherSelectChange();
+      } catch {}
     }
-
     function loadRecentStudents() {
-      const arr = JSON.parse(localStorage.getItem('recent_students') || '[]');
-      recentStudentsDL.innerHTML = arr.map(s => `<option value="${s}"></option>`).join('');
+      try {
+        const arr = JSON.parse(localStorage.getItem('recent_students') || '[]');
+        recentStudentsDL.innerHTML = arr.map(s => `<option value="${s}"></option>`).join('');
+      } catch { recentStudentsDL.innerHTML = ''; }
     }
     function pushRecentStudent(name) {
       const s = (name || '').trim(); if (!s) return;
-      const arr = JSON.parse(localStorage.getItem('recent_students') || '[]');
-      const next = [s, ...arr.filter(x => x.toLowerCase() !== s.toLowerCase())].slice(0, 5);
-      localStorage.setItem('recent_students', JSON.stringify(next));
-      loadRecentStudents();
+      try {
+        const arr = JSON.parse(localStorage.getItem('recent_students') || '[]');
+        const next = [s, ...arr.filter(x => x.toLowerCase() !== s.toLowerCase())].slice(0, 10);
+        localStorage.setItem('recent_students', JSON.stringify(next));
+        loadRecentStudents();
+      } catch {}
     }
-
     function populateTeachers() {
       const opts = TEACHERS.map((t, i) => `<option value="${i}">${t.name}</option>`).join('') + `<option value="custom">Custom…</option>`;
       teacherSelect.innerHTML = opts;
       teacherEmail.value = TEACHERS[0]?.email || '';
       teacherList.innerHTML = TEACHERS.map(t => `<li><span>${t.name}</span><span><code>${t.email}</code></span></li>`).join('');
     }
-
     function formatTimestamp() {
       const now = new Date(); const pad = n => String(n).padStart(2, '0');
       const YYYY = now.getFullYear(), MM = pad(now.getMonth()+1), DD = pad(now.getDate()), hh = pad(now.getHours()), mm = pad(now.getMinutes());
-      return { display: now.toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }), compact: `${YYYY}${MM}${DD}_${hh}${mm}` };
+      return { display: now.toLocaleString([], { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' }), compact: `${YYYY}${MM}${DD}_${hh}${mm}` };
     }
-
     function getSelectedTeacherName() {
       const idx = teacherSelect.value;
       return idx === 'custom' ? (customTeacherName.value || '').trim() : (TEACHERS[Number(idx)]?.name || '');
     }
-
+    // ---------- MULTI-LINE STAMP ----------
     function buildStampText() {
       const studentName = (nameInput.value || '').trim();
       const teacherName = getSelectedTeacherName();
       const subj = (subjectInput.value || '').trim();
       const tsObj = formatTimestamp();
-
       const line1 = [studentName, teacherName].filter(Boolean).join(' • ');
       const line2 = ['Pukekohe High School', tsObj.display].join(' • ');
       const line3 = subj ? subj : null;
-
       const lines = [line1, line2, line3].filter(Boolean);
       return { lines, studentName, teacherName, subject: subj, tsDisplay: tsObj.display, tsCompact: tsObj.compact };
     }
-
     function updateOverlay() {
       const { lines } = buildStampText();
       overlayText.textContent = lines.join('\n');
     }
-
     function roundRect(ctx, x, y, w, h, r) {
       const rr = Math.min(r, w/2, h/2);
       ctx.beginPath();
@@ -284,73 +288,63 @@
       ctx.arcTo(x, y, x+w, y, rr);
       ctx.closePath();
     }
-
     function drawStampMultiline(ctx, lines, w, h) {
-      const margin = Math.max(10, Math.round(w * 0.015));
-      const fontSize = Math.max(16, Math.round(w * 0.025));
-      const lineH = Math.round(fontSize * 1.2);
-      const padX = Math.round(fontSize * 0.5);
-      const padY = Math.round(fontSize * 0.4);
-
+      const margin = Math.max(12, Math.round(w * 0.012));
+      const fontSize = Math.max(20, Math.round(w * 0.03));
+      const lineH = Math.round(fontSize * 1.25);
+      const padX = Math.round(fontSize * 0.6);
+      const padY = Math.round(fontSize * 0.5);
       ctx.font = `600 ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
       ctx.textBaseline = 'top';
-
       let maxWidth = 0;
       for (const ln of lines) maxWidth = Math.max(maxWidth, ctx.measureText(ln).width);
-
       const boxW = Math.ceil(maxWidth + padX * 2);
       const boxH = Math.ceil(lines.length * lineH + padY * 2);
       const x = w - margin - boxW, y = margin;
-
       ctx.save();
-      roundRect(ctx, x, y, boxW, boxH, Math.round(fontSize * 0.4));
-      ctx.fillStyle = 'rgba(0,0,0,0.6)';
+      roundRect(ctx, x, y, boxW, boxH, Math.round(fontSize * 0.5));
+      ctx.fillStyle = 'rgba(0,0,0,0.55)';
       ctx.fill();
       ctx.fillStyle = '#fff'; ctx.textAlign = 'right';
       const tx = x + boxW - padX; let ty = y + padY;
       for (const ln of lines) { ctx.fillText(ln, tx, ty); ty += lineH; }
       ctx.restore();
-
       if (logoReady) {
-        const targetW = Math.max(32, Math.round(w * 0.1));
+        const targetW = Math.max(48, Math.round(w * 0.12));
         const scale = targetW / logoImg.naturalWidth;
         const targetH = Math.round(logoImg.naturalHeight * scale);
-        const gap = Math.round(w * 0.015);
+        const gap = Math.round(w * 0.02);
         const lx = w - targetW - gap, ly = h - targetH - gap;
         ctx.save();
-        roundRect(ctx, lx - 4, ly - 4, targetW + 8, targetH + 8, 8);
-        ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.fill();
+        roundRect(ctx, lx - 6, ly - 6, targetW + 12, targetH + 12, 10);
+        ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fill();
         ctx.drawImage(logoImg, lx, ly, targetW, targetH);
         ctx.restore();
       }
     }
-
+    // ---------- STAMPING FLOW ----------
     function stampFromImage(img) {
       const maxW = 800;
       const scale = Math.min(1, maxW / img.naturalWidth);
       const w = Math.round(img.naturalWidth * scale), h = Math.round(img.naturalHeight * scale);
       canvas.width = w; canvas.height = h;
-
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, w, h);
-
       const { lines, studentName, teacherName, subject, tsDisplay, tsCompact } = buildStampText();
       drawStampMultiline(ctx, lines, w, h);
-
       preview.src = canvas.toDataURL('image/jpeg', 0.85);
       preview.style.display = 'block';
       video.style.display = 'none';
-
       return new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.85)).then(blob => {
         const fname = buildFilename({ studentName, teacherName, tsCompact });
         stampedFile = new File([blob], fname, { type: 'image/jpeg' });
         lastMeta = { studentName: studentName || 'Unknown', teacherName: teacherName || 'Unknown', teacherEmail: teacherEmail.value || '', subject: subject || '', ts: tsDisplay, filename: fname };
         shareBtn.disabled = false;
+        downloadBtn.disabled = false;
         pushRecentStudent(studentName);
-        showToast('Photo ready. Tap Share.');
+        showToast('Photo ready. Tap Share or Download.');
       });
     }
-
     function sanitizeName(str) {
       return (str || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
     }
@@ -359,163 +353,102 @@
       const t = sanitizeName(teacherName) || 'Unknown';
       return `PHS_${s}_${t}_${tsCompact}.jpg`;
     }
-
     async function initCamera() {
-      if (stream) {
-        showToast('Camera already active.');
-        return;
-      }
       try {
-        // Try rear camera first, fallback to any camera
-        const constraints = [
-          { audio: false, video: { facingMode: 'environment' } },
-          { audio: false, video: true }
-        ];
-        let mediaStream = null;
-        for (const constraint of constraints) {
-          try {
-            mediaStream = await navigator.mediaDevices.getUserMedia(constraint);
-            break;
-          } catch (err) {
-            console.warn(`Failed with constraint: ${JSON.stringify(constraint)}`, err);
-          }
-        }
-        if (!mediaStream) throw new Error('No camera available');
-        
-        stream = mediaStream;
+        const constraints = { audio: false, video: { facingMode: { ideal: 'environment' } } };
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = stream;
-        video.play(); // Ensure autoplay
-        updateButtonStates();
-        showToast('Camera ready.');
+        shootBtn.disabled = false;
+        initBtn.disabled = true;
+        showToast('Camera enabled.');
       } catch (err) {
-        console.error('Camera init failed:', err);
-        let message = 'Camera access failed. ';
-        if (err.name === 'NotAllowedError') {
-          message += 'Allow camera access in browser settings.';
-        } else if (err.name === 'NotFoundError') {
-          message += 'No camera found on this device.';
-        } else {
-          message += 'Check device settings or try another browser.';
-        }
-        showToast(message, false);
+        console.error(err);
+        showToast('Could not access camera. Allow permission in browser settings.', false);
       }
     }
-
     async function captureAndStamp() {
       if (!stream) {
-        await initCamera(); // Try initializing if not active
-        if (!stream) return; // Exit if initialization fails
+        await initCamera();
+        if (!stream) return;
       }
       if (!nameInput.value.trim() || !teacherSelect.value) return showToast('Enter student name and select teacher.', false);
-
       const vw = video.videoWidth, vh = video.videoHeight;
       if (!vw || !vh) return showToast('Camera not ready. Try again.', false);
-
       const off = document.createElement('canvas'); off.width = vw; off.height = vh;
       off.getContext('2d').drawImage(video, 0, 0);
       const img = new Image(); img.onload = () => stampFromImage(img);
       img.src = off.toDataURL('image/jpeg', 0.9);
     }
-
-    async function uploadAndStamp() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'image/*';
-      input.onchange = () => {
-        const f = input.files[0];
-        if (!f) return showToast('No photo selected.', false);
-        if (!nameInput.value.trim() || !teacherSelect.value) return showToast('Enter student name and select teacher.', false);
-        const url = URL.createObjectURL(f);
-        const img = new Image();
-        img.onload = () => { URL.revokeObjectURL(url); stampFromImage(img); };
-        img.src = url;
-      };
-      input.click();
+    async function chooseFileAndStamp() {
+      if (!nameInput.value.trim() || !teacherSelect.value) return showToast('Enter student name and select teacher.', false);
+      const f = fileInput.files && fileInput.files[0];
+      if (!f) return showToast('Choose a photo first.', false);
+      const url = URL.createObjectURL(f);
+      const img = new Image();
+      img.onload = () => { URL.revokeObjectURL(url); stampFromImage(img); };
+      img.src = url;
     }
-
     async function sharePhoto() {
-      if (!stampedFile) return showToast('No photo to share. Capture or upload first.', false);
+      if (!stampedFile) return showToast('No image to share. Capture or choose first.', false);
       const body = `Student: ${lastMeta?.studentName || 'Unknown'}
 Teacher: ${lastMeta?.teacherName || 'Unknown'} (${lastMeta?.teacherEmail || ''})
 Subject: ${lastMeta?.subject || '-'}
 Time: ${lastMeta?.ts || ''}`;
-
       if (navigator.canShare && navigator.canShare({ files: [stampedFile] })) {
         try {
-          await navigator.share({ files: [stampedFile], title: lastMeta?.filename || 'photo', text: body });
-          showToast('Shared. Select email app to send.');
+          await navigator.share({ files: [stampedFile], title: lastMeta?.filename || 'printme', text: body });
+          showToast('Shared. Choose your email app to send.');
         } catch (err) {
           console.warn('Share cancelled or failed', err);
-          showToast('Share cancelled or not supported.', false);
+          showToast('Share cancelled or not supported on this device.', false);
         }
       } else {
-        const a = document.createElement('a'); a.href = URL.createObjectURL(stampedFile); a.download = lastMeta?.filename || 'photo.jpg';
-        document.body.appendChild(a); a.click();
-        setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
-        showToast('Downloaded. Attach to email manually.');
+        downloadImage();
       }
     }
-
+    function downloadImage() {
+      if (!stampedFile) return showToast('Nothing to download yet.', false);
+      const a = document.createElement('a'); a.href = URL.createObjectURL(stampedFile); a.download = lastMeta?.filename || 'photo.jpg';
+      document.body.appendChild(a); a.click();
+      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+      showToast('Downloaded.');
+    }
     function clearAll() {
-      stampedFile = null; lastMeta = null;
+      stampedFile = null;
+      lastMeta = null;
       preview.style.display = 'none';
       video.style.display = 'block';
       shareBtn.disabled = true;
+      downloadBtn.disabled = true;
       showToast('Cleared.');
     }
-
     function handleTeacherSelectChange() {
       const idx = teacherSelect.value, isCustom = idx === 'custom';
       customTeacherGroup.style.display = isCustom ? '' : 'none';
       if (!isCustom) { const t = TEACHERS[Number(idx)]; teacherEmail.value = t?.email || ''; }
       updateOverlay(); persist();
     }
-
-    function updateButtonStates() {
-      const isReady = nameInput.value.trim() && teacherSelect.value && stream;
-      shootBtn.disabled = !isReady;
-      captureShareBtn.disabled = !isReady;
-      shareBtn.disabled = !stampedFile;
-      initCameraBtn.disabled = !!stream; // Disable when camera is active
-    }
-
-    // Event wiring
-    initCameraBtn.addEventListener('click', initCamera);
-    video.addEventListener('dblclick', captureAndStamp);
-    shootBtn.addEventListener('click', captureAndStamp);
-    captureShareBtn.addEventListener('click', async () => {
-      await captureAndStamp();
-      if (stampedFile) await sharePhoto();
-    });
-    uploadBtn.addEventListener('click', uploadAndStamp);
-    shareBtn.addEventListener('click', sharePhoto);
-    clearBtn.addEventListener('click', clearAll);
-    helpBtn.addEventListener('click', () => tipsDialog.showModal());
-    themeBtn.addEventListener('click', toggleTheme);
-
-    nameInput.addEventListener('input', () => { updateOverlay(); persist(); updateButtonStates(); });
-    teacherSelect.addEventListener('change', () => { handleTeacherSelectChange(); updateButtonStates(); });
-    teacherEmail.addEventListener('input', persist);
-    customTeacherName.addEventListener('input', () => { updateOverlay(); persist(); });
-    subjectInput.addEventListener('input', () => { updateOverlay(); persist(); });
-
+    // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.metaKey && !e.ctrlKey) { if (!shootBtn.disabled) captureAndStamp(); }
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); if (!shareBtn.disabled) sharePhoto(); }
+      if (e.key === 'Enter' && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) { if (!shootBtn.disabled) captureAndStamp(); }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); if (!shareBtn.disabled) sharePhoto(); else if (!downloadBtn.disabled) downloadImage(); }
     });
-
-    // PWA install
+    // --- PWA install prompt & SW registration ---
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault(); deferredPrompt = e; installBtn.style.display = '';
     });
-    installBtn.addEventListener('click', async () => {
+    installBtn?.addEventListener('click', async () => {
       if (!deferredPrompt) return;
       installBtn.disabled = true; deferredPrompt.prompt();
       await deferredPrompt.userChoice; deferredPrompt = null; installBtn.style.display = 'none';
     });
     window.addEventListener('appinstalled', () => { installBtn.style.display = 'none'; });
-
-    // Service Worker
+    function isIosStandalone() { return (window.navigator.standalone === true) || window.matchMedia('(display-mode: standalone)').matches; }
+    function isIos() { return /iphone|ipad|ipod/i.test(window.navigator.userAgent); }
+    if (isIos() && !isIosStandalone()) {
+      // Optional tip:
+      // showToast('Tip: On iPhone/iPad, use Share → Add to Home Screen to install.');
+    }
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', async () => {
         try {
@@ -525,54 +458,42 @@ Time: ${lastMeta?.ts || ''}`;
             const sw = reg.installing;
             sw?.addEventListener('statechange', () => {
               if (sw.state === 'installed' && navigator.serviceWorker.controller) {
-                showToast('Update available. Reloading...');
-                setTimeout(() => location.reload(), 2000);
+                showToast('Update available. Reload for latest.');
               }
             });
           });
+          navigator.serviceWorker.addEventListener('controllerchange', () => {});
         } catch (err) { console.warn('SW registration failed', err); }
       });
     }
-
-    // Camera initialization with fallback
-    function tryInitCamera() {
-      if (!navigator.mediaDevices) {
-        showToast('Camera not supported on this device.', false);
-        return;
-      }
-      // Try permissions API first
-      if (navigator.permissions && navigator.permissions.query) {
-        navigator.permissions.query({ name: 'camera' }).then(p => {
-          if (p.state === 'granted') {
-            initCamera();
-          } else if (p.state === 'prompt') {
-            showToast('Tap Enable Camera to activate.', false);
-          } else {
-            showToast('Camera access denied. Allow in settings.', false);
-          }
-        }).catch(err => {
-          console.warn('Permissions query failed:', err);
-          // Fallback: try initializing on user interaction
-          showToast('Tap Enable Camera to activate.', false);
-        });
-      } else {
-        // Fallback for browsers without permissions API
-        showToast('Tap Enable Camera to activate.', false);
-      }
+    // --- Event wiring ---
+    initBtn.addEventListener('click', initCamera);
+    helpBtn.addEventListener('click', () => tipsDialog.showModal());
+    themeBtn.addEventListener('click', toggleTheme);
+    shootBtn.addEventListener('click', captureAndStamp);
+    fileStampBtn.addEventListener('click', chooseFileAndStamp);
+    shareBtn.addEventListener('click', sharePhoto);
+    downloadBtn.addEventListener('click', downloadImage);
+    clearBtn.addEventListener('click', clearAll);
+    teacherSelect.addEventListener('change', handleTeacherSelectChange);
+    teacherEmail.addEventListener('input', persist);
+    customTeacherName.addEventListener('input', () => { updateOverlay(); persist(); });
+    nameInput.addEventListener('input', () => { updateOverlay(); persist(); });
+    subjectInput.addEventListener('input', () => { updateOverlay(); persist(); });
+    copyEmailBtn?.addEventListener('click', async () => {
+      if (!teacherEmail.value) return showToast('No email to copy', false);
+      try { await navigator.clipboard.writeText(teacherEmail.value); showToast('Email copied'); } catch { showToast('Copy failed', false); }
+    });
+    if (navigator.mediaDevices && navigator.permissions) {
+      navigator.permissions.query({ name: 'camera' }).then(p => { if (p.state === 'granted') initCamera(); }).catch(() => {});
     }
-
     // Init
-    (function init() {
+    (function init(){
       setTheme(getTheme());
       populateTeachers();
       restore();
       updateOverlay();
       loadRecentStudents();
-      updateButtonStates();
-      tryInitCamera();
-      logoImg.onload = () => { logoReady = true; };
-      logoImg.onerror = () => { logoReady = false; };
-      logoImg.src = 'phs_crest.png';
     })();
   </script>
 </body>
