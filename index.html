@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pukekohe HS • Camera → Stamp & Send</title>
 
+  <!-- PWA meta -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Pukekohe HS Stamper">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" sizes="192x192" href="icon-192.png">
+  <link rel="icon" sizes="512x512" href="icon-512.png">
+
   <style>
     :root{
       color-scheme: light dark;
@@ -32,6 +42,7 @@
     .btn-row{display:flex;flex-wrap:wrap;gap:var(--space)}
     .primary{background:var(--accent);color:#fff;border:none}
     .success{background:var(--ok);color:#fff;border:none}
+    .ghost{background:transparent;border:1px dashed var(--border);}
 
     .media-wrap{position:relative;border-radius:var(--radius);overflow:hidden;background:#000;border:1px solid var(--border)}
     .media{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;display:block;background:#000}
@@ -86,6 +97,8 @@
               <div class="btn-row">
                 <button id="initBtn" class="primary">Enable Camera</button>
                 <button id="stampBtn" class="success">Stamp &amp; Send</button>
+                <!-- NEW: explicit download button -->
+                <button id="downloadBtn" class="ghost" disabled>Download stamped image</button>
               </div>
               <div class="inline" style="margin-top:8px">
                 <input type="checkbox" id="gmailToggle" />
@@ -96,7 +109,8 @@
 
           <p class="hint">
             • If camera is enabled, Stamp &amp; Send uses the live camera frame (even if a file was previously chosen).<br>
-            • Web Share can’t prefill the To field. Turn on “Prefill in Gmail” to open Gmail with the teacher’s email/subject/body, and we’ll download the stamped image for quick attachment.
+            • Web Share can’t prefill the To field. Turn on “Prefill in Gmail” to open Gmail with the teacher’s email/subject/body, and we’ll download the stamped image for quick attachment.<br>
+            • You can also tap “Download stamped image” after stamping to save it directly.
           </p>
 
           <div id="toast" class="toast" role="status"></div>
@@ -129,6 +143,7 @@
     // Refs
     const initBtn = document.getElementById('initBtn');
     const stampBtn = document.getElementById('stampBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
     const teacherSelect = document.getElementById('teacherSelect');
     const teacherEmail = document.getElementById('teacherEmail');
     const nameInput = document.getElementById('name');
@@ -298,6 +313,8 @@
         preview.style.display = 'block';
         video.style.display = 'none';
         setTimeout(()=>URL.revokeObjectURL(dataURL), 0);
+
+        if (downloadBtn) downloadBtn.disabled = false;
       } finally { try { loaded.revoke?.(); } catch {} }
     }
 
@@ -330,6 +347,8 @@
       preview.style.display = 'block';
       video.style.display = 'none';
       setTimeout(()=>URL.revokeObjectURL(dataURL), 0);
+
+      if (downloadBtn) downloadBtn.disabled = false;
     }
 
     // Share vs Gmail compose
@@ -424,11 +443,40 @@ Time: ${formatTimestamp()}`;
     // Events
     initBtn.addEventListener('click', initCamera);
     stampBtn.addEventListener('click', stampAndSend);
+    downloadBtn?.addEventListener('click', () => {
+      if (!stampedFile) {
+        showToast("No stamped image yet", false);
+        return;
+      }
+      downloadStampedIfAny();
+      showToast("Downloaded stamped image");
+    });
+
     [nameInput, subjectInput, teacherEmail, teacherSelect].forEach(el=>{
       el.addEventListener('input', updateOverlay);
       el.addEventListener('change', updateOverlay);
     });
     updateOverlay(); setInterval(updateOverlay, 5000);
+
+    // --- Service worker registration (PWA) ---
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', async () => {
+        try {
+          const reg = await navigator.serviceWorker.register('./service-worker.js');
+          if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+          reg.addEventListener('updatefound', () => {
+            const sw = reg.installing;
+            sw?.addEventListener('statechange', () => {
+              if (sw.state === 'installed' && navigator.serviceWorker.controller) {
+                showToast('Update available. Reload for latest.');
+              }
+            });
+          });
+        } catch (err) {
+          console.warn('Service worker registration failed', err);
+        }
+      });
+    }
   </script>
 </body>
 </html>
