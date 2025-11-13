@@ -104,6 +104,7 @@
         </details>
 
         <div class="btn-row">
+          <button id="initCameraBtn" class="ghost" style="display:none;">Enable Camera</button>
           <button id="shootBtn" class="primary" disabled>Capture</button>
           <button id="uploadBtn" class="ghost">Upload & Stamp</button>
           <button id="shareBtn" class="success" disabled>Share</button>
@@ -159,6 +160,7 @@
     ];
 
     // UI refs
+    const initCameraBtn = document.getElementById('initCameraBtn');
     const captureShareBtn = document.getElementById('captureShareBtn');
     const shootBtn = document.getElementById('shootBtn');
     const uploadBtn = document.getElementById('uploadBtn');
@@ -359,20 +361,48 @@
     }
 
     async function initCamera() {
+      if (stream) return; // Prevent multiple initializations
       try {
-        const constraints = { audio: false, video: { facingMode: { ideal: 'environment' } } };
-        stream = await navigator.mediaDevices.getUserMedia(constraints);
+        // Try rear camera first, fallback to any camera
+        const constraints = [
+          { audio: false, video: { facingMode: 'environment' } },
+          { audio: false, video: true }
+        ];
+        let mediaStream = null;
+        for (const constraint of constraints) {
+          try {
+            mediaStream = await navigator.mediaDevices.getUserMedia(constraint);
+            break;
+          } catch (err) {
+            console.warn(`Failed with constraint: ${JSON.stringify(constraint)}`, err);
+          }
+        }
+        if (!mediaStream) throw new Error('No camera available');
+        
+        stream = mediaStream;
         video.srcObject = stream;
+        video.play(); // Ensure autoplay
         updateButtonStates();
         showToast('Camera ready.');
       } catch (err) {
-        console.error(err);
-        showToast('Camera access denied. Allow in settings.', false);
+        console.error('Camera init failed:', err);
+        let message = 'Camera access failed. ';
+        if (err.name === 'NotAllowedError') {
+          message += 'Allow camera access in browser settings.';
+        } else if (err.name === 'NotFoundError') {
+          message += 'No camera found on this device.';
+        } else {
+          message += 'Check device settings or try another browser.';
+        }
+        showToast(message, false);
       }
     }
 
     async function captureAndStamp() {
-      if (!stream) return showToast('Camera not ready. Allow access.', false);
+      if (!stream) {
+        await initCamera(); // Try initializing if not active
+        if (!stream) return; // Exit if initialization fails
+      }
       if (!nameInput.value.trim() || !teacherSelect.value) return showToast('Enter student name and select teacher.', false);
 
       const vw = video.videoWidth, vh = video.videoHeight;
@@ -443,9 +473,11 @@ Time: ${lastMeta?.ts || ''}`;
       shootBtn.disabled = !isReady;
       captureShareBtn.disabled = !isReady;
       shareBtn.disabled = !stampedFile;
+      initCameraBtn.style.display = stream ? 'none' : '';
     }
 
     // Event wiring
+    initCameraBtn.addEventListener('click', initCamera);
     video.addEventListener('dblclick', captureAndStamp);
     shootBtn.addEventListener('click', captureAndStamp);
     captureShareBtn.addEventListener('click', async () => {
@@ -490,12 +522,40 @@ Time: ${lastMeta?.ts || ''}`;
             const sw = reg.installing;
             sw?.addEventListener('statechange', () => {
               if (sw.state === 'installed' && navigator.serviceWorker.controller) {
-                showToast('Update available. Reload for latest.');
+                showToast('Update available. Reloading...');
+                setTimeout(() => location.reload(), 2000);
               }
             });
           });
         } catch (err) { console.warn('SW registration failed', err); }
       });
+    }
+
+    // Camera initialization with fallback
+    function tryInitCamera() {
+      if (!navigator.mediaDevices) {
+        showToast('Camera not supported on this device.', false);
+        return;
+      }
+      // Try permissions API first
+      if (navigator.permissions && navigator.permissions.query) {
+        navigator.permissions.query({ name: 'camera' }).then(p => {
+          if (p.state === 'granted') {
+            initCamera();
+          } else if (p.state === 'prompt') {
+            showToast('Tap Capture to enable camera.', false);
+          } else {
+            showToast('Camera access denied. Allow in settings.', false);
+          }
+        }).catch(err => {
+          console.warn('Permissions query failed:', err);
+          // Fallback: try initializing on user interaction
+          showToast('Tap Capture to enable camera.', false);
+        });
+      } else {
+        // Fallback for browsers without permissions API
+        showToast('Tap Capture to enable camera.', false);
+      }
     }
 
     // Init
@@ -506,9 +566,7 @@ Time: ${lastMeta?.ts || ''}`;
       updateOverlay();
       loadRecentStudents();
       updateButtonStates();
-      if (navigator.mediaDevices && navigator.permissions) {
-        navigator.permissions.query({ name: 'camera' }).then(p => { if (p.state === 'granted') initCamera(); });
-      }
+      tryInitCamera();
       logoImg.onload = () => { logoReady = true; };
       logoImg.onerror = () => { logoReady = false; };
       logoImg.src = 'phs_crest.png';
