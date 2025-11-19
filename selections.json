@@ -4,75 +4,142 @@
       "id": "ry",
       "name": "Mr Reynolds",
       "email": "ry@pukekohehigh.school.nz",
-      "subjects": ["eng_l1"]
-    },
-    {
-      "id": "dvm",
-      "name": "Mrs Devaney",
-      "email": "dvm@pukekohehigh.school.nz",
-      "subjects": ["build_l1"]
+      "subjects": [
+        "9ttec",
+        "10ttec",
+        "9tdvc",
+        "10tdvc",
+        "11tdvc",
+        "12tdvc",
+        "13tdvc",
+        "1tegr",
+        "2tegr",
+        "3tegr",
+        "1tbld",
+        "2tbld",
+        "2bldt"
+      ]
     },
     {
       "id": "ncc",
       "name": "Mr Nicholls",
       "email": "ncc@pukekohehigh.school.nz",
-      "subjects": ["eng_l1", "build_l1"]
+      "subjects": [
+        "1tegr",
+        "2tegr",
+        "3tegr",
+        "9ttec",
+        "10ttec"
+      ]
     },
     {
       "id": "kpc",
       "name": "Mr Knapman",
       "email": "kpc@pukekohehigh.school.nz",
-      "subjects": ["build_l1"]
+      "subjects": [
+        "1tegr",
+        "2tegr",
+        "3tegr"
+      ]
     },
     {
       "id": "rnr",
       "name": "Mr Ranson",
       "email": "rnr@pukekohehigh.school.nz",
-      "subjects": ["eng_l1"]
+      "subjects": [
+        "1tbld",
+        "2tbld",
+        "2bldt",
+        "9ttec",
+        "10ttec"
+      ]
+    },
+    {
+      "id": "dvm",
+      "name": "Mrs Devaney",
+      "email": "dvm@pukekohehigh.school.nz",
+      "subjects": [
+        "9tdvc",
+        "10tdvc",
+        "11tdvc",
+        "12tdvc",
+        "13tdvc"
+      ]
     }
   ],
+
   "subjects": [
-    {
-      "id": "eng_l1",
-      "label": "Level 1 – Engineering"
-    },
-    {
-      "id": "build_l1",
-      "label": "Level 1 – Building"
-    }
+    { "id": "9ttec",  "label": "Year 9 Technology (9TTEC)" },
+    { "id": "10ttec", "label": "Year 10 Technology (10TTEC)" },
+
+    { "id": "9tdvc",  "label": "Year 9 DVC (9TDVC)" },
+    { "id": "10tdvc", "label": "Year 10 DVC (10TDVC)" },
+    { "id": "11tdvc", "label": "Level 1 DVC (11TDVC)" },
+    { "id": "12tdvc", "label": "Level 2 DVC (12TDVC)" },
+    { "id": "13tdvc", "label": "Level 3 DVC (13TDVC)" },
+
+    { "id": "1tegr",  "label": "Level 1 Engineering (1TEGR)" },
+    { "id": "2tegr",  "label": "Level 2 Engineering (2TEGR)" },
+    { "id": "3tegr",  "label": "Level 3 Engineering (3TEGR)" },
+
+    { "id": "1tbld",  "label": "Level 1 Building (1TBLD)" },
+    { "id": "2tbld",  "label": "Level 2 Building (2TBLD)" },
+    { "id": "2bldt",  "label": "Building Trades (2BLDT)" }
   ],
+
   "projects": [
-    {
-      "id": "eng_l1_pencil_case",
-      "subjectId": "eng_l1",
-      "label": "Pencil case"
-    },
-    {
-      "id": "eng_l1_marking_gauge",
-      "subjectId": "eng_l1",
-      "label": "Marking gauge"
-    },
-    {
-      "id": "eng_l1_own",
-      "subjectId": "eng_l1",
-      "label": "Own project",
-      "allowCustomName": true
-    },
-    {
-      "id": "build_l1_step_stool",
-      "subjectId": "build_l1",
-      "label": "Step stool"
-    },
-    {
-      "id": "build_l1_planter",
-      "subjectId": "build_l1",
-      "label": "Garden planter"
-    },
-    {
-      "id": "build_l1_own",
-      "subjectId": "build_l1",
-      "label": "Own project",
-      "allowCustomName": true
-    }
+    /* Year 9 Technology (9ttec) */
+    { "id": "9ttec_electric_circuit", "subjectId": "9ttec", "label": "Electric Circuit" },
+    { "id": "9ttec_photo_frame",      "subjectId": "9ttec", "label": "Photo Frame" },
+    { "id": "9ttec_folding_stool",    "subjectId": "9ttec", "label": "Folding Stool" },
+    { "id": "9ttec_matariki",         "subjectId": "9ttec", "label": "Matariki" },
+
+    /* Year 10 Technology (10ttec) */
+    { "id": "10ttec_pewter_casting",    "subjectId": "10ttec", "label": "Pewter Casting" },
+    { "id": "10ttec_modular_furniture", "subjectId": "10ttec", "label": "Modular Furniture" },
+    { "id": "10ttec_picnic_table",      "subjectId": "10ttec", "label": "Picnic Table" },
+
+    /* DVC – Juniors: own project */
+    { "id": "9tdvc_own",  "subjectId": "9tdvc",  "label": "Own project", "allowCustomName": true },
+    { "id": "10tdvc_own", "subjectId": "10tdvc", "label": "Own project", "allowCustomName": true },
+
+    /* DVC L1–L3: Spatial + own project */
+    { "id": "11tdvc_spatial_design", "subjectId": "11tdvc", "label": "Spatial Design" },
+    { "id": "11tdvc_own",            "subjectId": "11tdvc", "label": "Own project", "allowCustomName": true },
+
+    { "id": "12tdvc_spatial_design", "subjectId": "12tdvc", "label": "Spatial Design" },
+    { "id": "12tdvc_own",            "subjectId": "12tdvc", "label": "Own project", "allowCustomName": true },
+
+    { "id": "13tdvc_spatial_design", "subjectId": "13tdvc", "label": "Spatial Design" },
+    { "id": "13tdvc_own",            "subjectId": "13tdvc", "label": "Own project", "allowCustomName": true },
+
+    /* Engineering L1 (1tegr) */
+    { "id": "1tegr_pencil_case",   "subjectId": "1tegr", "label": "Pencil Case" },
+    { "id": "1tegr_marking_gauge", "subjectId": "1tegr", "label": "Marking Gauge" },
+    { "id": "1tegr_own",           "subjectId": "1tegr", "label": "Own project", "allowCustomName": true },
+
+    /* Engineering L2 (2tegr) */
+    { "id": "2tegr_tool_box",     "subjectId": "2tegr", "label": "Tool Box" },
+    { "id": "2tegr_machine_vice", "subjectId": "2tegr", "label": "Machine Vice" },
+    { "id": "2tegr_other",        "subjectId": "2tegr", "label": "Other / Own project", "allowCustomName": true },
+
+    /* Engineering L3 (3tegr) */
+    { "id": "3tegr_handy_trolley",      "subjectId": "3tegr", "label": "Handy Trolley" },
+    { "id": "3tegr_sheet_metal_funnel", "subjectId": "3tegr", "label": "Sheet Metal Funnel" },
+    { "id": "3tegr_own",                "subjectId": "3tegr", "label": "Own project", "allowCustomName": true },
+
+    /* Building L1 (1tbld) */
+    { "id": "1tbld_file_box",   "subjectId": "1tbld", "label": "File Box" },
+    { "id": "1tbld_tool_box",   "subjectId": "1tbld", "label": "Tool Box" },
+    { "id": "1tbld_planter_box","subjectId": "1tbld", "label": "Planter Box" },
+    { "id": "1tbld_other",      "subjectId": "1tbld", "label": "Other", "allowCustomName": true },
+
+    /* Building L2 (2tbld) */
+    { "id": "2tbld_step_ladder",    "subjectId": "2tbld", "label": "Step Ladder" },
+    { "id": "2tbld_cape_cod_rocker","subjectId": "2tbld", "label": "Cape Cod Rocker" },
+    { "id": "2tbld_other",          "subjectId": "2tbld", "label": "Other", "allowCustomName": true },
+
+    /* Building Trades (2bldt) */
+    { "id": "2bldt_small_sleepout", "subjectId": "2bldt", "label": "Small Sleepout" }
   ]
 }
