@@ -67,7 +67,6 @@
       ]
     }
   ],
-
   "subjects": [
     { "id": "9ttec",  "label": "Year 9 Technology (9TTEC)" },
     { "id": "10ttec", "label": "Year 10 Technology (10TTEC)" },
@@ -86,24 +85,19 @@
     { "id": "2tbld",  "label": "Level 2 Building (2TBLD)" },
     { "id": "2bldt",  "label": "Building Trades (2BLDT)" }
   ],
-
   "projects": [
-    /* Year 9 Technology (9ttec) */
     { "id": "9ttec_electric_circuit", "subjectId": "9ttec", "label": "Electric Circuit" },
     { "id": "9ttec_photo_frame",      "subjectId": "9ttec", "label": "Photo Frame" },
     { "id": "9ttec_folding_stool",    "subjectId": "9ttec", "label": "Folding Stool" },
     { "id": "9ttec_matariki",         "subjectId": "9ttec", "label": "Matariki" },
 
-    /* Year 10 Technology (10ttec) */
     { "id": "10ttec_pewter_casting",    "subjectId": "10ttec", "label": "Pewter Casting" },
     { "id": "10ttec_modular_furniture", "subjectId": "10ttec", "label": "Modular Furniture" },
     { "id": "10ttec_picnic_table",      "subjectId": "10ttec", "label": "Picnic Table" },
 
-    /* DVC – Juniors: own project */
     { "id": "9tdvc_own",  "subjectId": "9tdvc",  "label": "Own project", "allowCustomName": true },
     { "id": "10tdvc_own", "subjectId": "10tdvc", "label": "Own project", "allowCustomName": true },
 
-    /* DVC L1–L3: Spatial + own project */
     { "id": "11tdvc_spatial_design", "subjectId": "11tdvc", "label": "Spatial Design" },
     { "id": "11tdvc_own",            "subjectId": "11tdvc", "label": "Own project", "allowCustomName": true },
 
@@ -113,33 +107,27 @@
     { "id": "13tdvc_spatial_design", "subjectId": "13tdvc", "label": "Spatial Design" },
     { "id": "13tdvc_own",            "subjectId": "13tdvc", "label": "Own project", "allowCustomName": true },
 
-    /* Engineering L1 (1tegr) */
     { "id": "1tegr_pencil_case",   "subjectId": "1tegr", "label": "Pencil Case" },
     { "id": "1tegr_marking_gauge", "subjectId": "1tegr", "label": "Marking Gauge" },
     { "id": "1tegr_own",           "subjectId": "1tegr", "label": "Own project", "allowCustomName": true },
 
-    /* Engineering L2 (2tegr) */
     { "id": "2tegr_tool_box",     "subjectId": "2tegr", "label": "Tool Box" },
     { "id": "2tegr_machine_vice", "subjectId": "2tegr", "label": "Machine Vice" },
     { "id": "2tegr_other",        "subjectId": "2tegr", "label": "Other / Own project", "allowCustomName": true },
 
-    /* Engineering L3 (3tegr) */
     { "id": "3tegr_handy_trolley",      "subjectId": "3tegr", "label": "Handy Trolley" },
     { "id": "3tegr_sheet_metal_funnel", "subjectId": "3tegr", "label": "Sheet Metal Funnel" },
     { "id": "3tegr_own",                "subjectId": "3tegr", "label": "Own project", "allowCustomName": true },
 
-    /* Building L1 (1tbld) */
-    { "id": "1tbld_file_box",   "subjectId": "1tbld", "label": "File Box" },
-    { "id": "1tbld_tool_box",   "subjectId": "1tbld", "label": "Tool Box" },
-    { "id": "1tbld_planter_box","subjectId": "1tbld", "label": "Planter Box" },
-    { "id": "1tbld_other",      "subjectId": "1tbld", "label": "Other", "allowCustomName": true },
+    { "id": "1tbld_file_box",    "subjectId": "1tbld", "label": "File Box" },
+    { "id": "1tbld_tool_box",    "subjectId": "1tbld", "label": "Tool Box" },
+    { "id": "1tbld_planter_box", "subjectId": "1tbld", "label": "Planter Box" },
+    { "id": "1tbld_other",       "subjectId": "1tbld", "label": "Other", "allowCustomName": true },
 
-    /* Building L2 (2tbld) */
-    { "id": "2tbld_step_ladder",    "subjectId": "2tbld", "label": "Step Ladder" },
-    { "id": "2tbld_cape_cod_rocker","subjectId": "2tbld", "label": "Cape Cod Rocker" },
-    { "id": "2tbld_other",          "subjectId": "2tbld", "label": "Other", "allowCustomName": true },
+    { "id": "2tbld_step_ladder",     "subjectId": "2tbld", "label": "Step Ladder" },
+    { "id": "2tbld_cape_cod_rocker", "subjectId": "2tbld", "label": "Cape Cod Rocker" },
+    { "id": "2tbld_other",           "subjectId": "2tbld", "label": "Other", "allowCustomName": true },
 
-    /* Building Trades (2bldt) */
     { "id": "2bldt_small_sleepout", "subjectId": "2bldt", "label": "Small Sleepout" }
   ]
 }
