@@ -128,7 +128,11 @@ function pushRecentStudent(name) {
 }
 
 // --- JSON-driven selections ---
+// *** FIXED VERSION: preserves previously selected teacher where possible ***
 function populateTeachersFromSelections(filterSubjectId) {
+  // Remember who was selected *before* we rebuild the list
+  const previousId = teacherSelect.value;
+
   const teachers = filterSubjectId
     ? selections.teachers.filter(t => (t.subjects || []).includes(filterSubjectId))
     : selections.teachers;
@@ -137,12 +141,25 @@ function populateTeachersFromSelections(filterSubjectId) {
   options.push('<option value="custom">Custom…</option>');
   teacherSelect.innerHTML = options.join('');
 
-  // default selection
-  if (teachers[0]) {
-    teacherSelect.value = teachers[0].id;
-    teacherEmail.value = teachers[0].email || '';
+  // Decide what should be selected now
+  let newId = previousId;
+
+  // If the previously selected teacher is no longer in the list, fall back
+  if (!teachers.some(t => t.id === previousId)) {
+    if (teachers[0]) {
+      newId = teachers[0].id;
+    } else {
+      newId = 'custom';
+    }
+  }
+
+  teacherSelect.value = newId;
+
+  // Keep email in sync for non-custom teachers
+  if (newId !== 'custom') {
+    const t = selections.teachers.find(t => t.id === newId);
+    teacherEmail.value = t?.email || '';
   } else {
-    teacherSelect.value = 'custom';
     teacherEmail.value = '';
   }
 
