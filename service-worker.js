@@ -1,7 +1,7 @@
 // service-worker.js – Offline-first PWA for PHS Stamper
 
 // Bump this version whenever you change core assets (HTML/CSS/JS/JSON/icons).
-const CACHE_NAME = 'phs-stamper-v103';
+const CACHE_NAME = 'phs-stamper-v104';
 
 const CORE_ASSETS = [
   './',
