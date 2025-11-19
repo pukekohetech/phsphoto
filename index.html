@@ -66,6 +66,7 @@
     </div>
     <div id="toast" class="toast" role="status"></div>
   </header>
+
   <section class="grid">
     <div class="row row--2">
       <div class="panel stack">
@@ -74,6 +75,7 @@
           <input id="name" list="recentStudents" placeholder="e.g., Alex Smith" autocomplete="name" />
           <datalist id="recentStudents"></datalist>
         </div>
+
         <div class="row row--2">
           <div class="stack">
             <label for="teacherSelect">Select teacher</label>
@@ -84,6 +86,7 @@
             <input id="teacherEmail" type="email" placeholder="teacher@pukekohehigh.school.nz" />
           </div>
         </div>
+
         <div id="customTeacherGroup" class="row row--2" style="display:none;">
           <div class="stack">
             <label for="customTeacherName">Custom teacher name</label>
@@ -94,10 +97,31 @@
             <button id="copyEmailBtn">Copy email</button>
           </div>
         </div>
-        <div class="stack">
-          <label for="subject">Subject / Project (optional)</label>
-          <input id="subject" placeholder="e.g., Food Tech — Burger Build" />
+
+        <!-- SUBJECT / PROJECT DROPDOWNS DRIVEN BY selections.json -->
+        <div class="row row--2">
+          <div class="stack">
+            <label for="subjectSelect">Subject / Level</label>
+            <select id="subjectSelect">
+              <option value="">Select subject…</option>
+            </select>
+          </div>
+          <div class="stack">
+            <label for="projectSelect">Project</label>
+            <select id="projectSelect" disabled>
+              <option value="">Select project…</option>
+            </select>
+          </div>
         </div>
+
+        <div id="customProjectGroup" class="stack" style="display:none;">
+          <label for="customProjectInput">Own project (describe)</label>
+          <input id="customProjectInput" placeholder="e.g., Custom project" />
+        </div>
+
+        <!-- Hidden subject text used for stamp + persistence -->
+        <input id="subject" type="hidden" />
+
         <div class="row row--2">
           <div class="stack">
             <label for="fileInput">Choose a photo (optional)</label>
@@ -108,18 +132,23 @@
             <button id="fileStampBtn">Choose & Stamp (File)</button>
           </div>
         </div>
+
         <div class="btn-row">
           <button id="shootBtn" class="primary" disabled>Capture & Stamp (Camera)</button>
           <button id="shareBtn" class="success" disabled>Share</button>
           <button id="downloadBtn" class="ghost" disabled>Download</button>
           <button id="clearBtn" class="danger">Clear</button>
         </div>
+
         <p class="hint">
           Stamp appears at the <strong>top-right</strong> on up to <strong>three lines</strong>:
-          <br><em>Student • Teacher</em><br><em>Pukekohe High School • date/time</em><br><em>Subject/Project (optional)</em>.
+          <br><em>Student • Teacher</em><br>
+          <em>Pukekohe High School • date/time</em><br>
+          <em>Subject/Project (optional)</em>.<br>
           Share Sheet can’t pre-fill the recipient; we copy the teacher’s email for quick paste and include it in the body.
         </p>
       </div>
+
       <div class="panel stack">
         <div class="inline">
           <span class="pill">Preview</span>
@@ -133,11 +162,13 @@
         <img id="preview" class="media" alt="Preview appears here after capture" style="display:none;" />
       </div>
     </div>
+
     <section class="panel">
       <h3 class="inline">Relevant teachers <span class="pill muted">quick reference</span></h3>
       <ul id="teacherList" class="teachers"></ul>
     </section>
   </section>
+
   <dialog id="tipsDialog">
     <form method="dialog" class="stack" style="min-width: min(92vw, 640px);">
       <h3>Tips</h3>
@@ -152,15 +183,11 @@
       </div>
     </form>
   </dialog>
+
   <script>
-    // 🔧 Edit this list to your real staff
-    const TEACHERS = [
-      { name: 'Mr Reynolds', email: 'ry@pukekohehigh.school.nz' },
-      { name: 'Mrs Devaney', email: 'dvm@pukekohehigh.school.nz' },
-      { name: 'Mr Nicholls', email: 'ncc@pukekohehigh.school.nz' },
-      { name: 'Mr Knapman', email: 'kpc@pukekohehigh.school.nz' },
-      { name: 'Mr Ranson', email: 'rnr@pukekohehigh.school.nz' }
-    ];
+    // Data loaded from selections.json
+    let selections = { teachers: [], subjects: [], projects: [] };
+
     // UI refs
     const initBtn = document.getElementById('initBtn');
     const helpBtn = document.getElementById('helpBtn');
@@ -174,7 +201,11 @@
     const downloadBtn = document.getElementById('downloadBtn');
     const clearBtn = document.getElementById('clearBtn');
     const nameInput = document.getElementById('name');
-    const subjectInput = document.getElementById('subject');
+    const subjectInput = document.getElementById('subject'); // hidden internal subject text
+    const subjectSelect = document.getElementById('subjectSelect');
+    const projectSelect = document.getElementById('projectSelect');
+    const customProjectGroup = document.getElementById('customProjectGroup');
+    const customProjectInput = document.getElementById('customProjectInput');
     const teacherSelect = document.getElementById('teacherSelect');
     const teacherEmail = document.getElementById('teacherEmail');
     const copyEmailBtn = document.getElementById('copyEmailBtn');
@@ -187,16 +218,19 @@
     const customTeacherName = document.getElementById('customTeacherName');
     const tipsDialog = document.getElementById('tipsDialog');
     const recentStudentsDL = document.getElementById('recentStudents');
+
     // State
     let stream, stampedFile, lastMeta = null;
     let logoImg = new Image(), logoReady = false;
     let deferredPrompt = null;
+
     // Try to preload crest; optional
     (function preloadLogo(){
       logoImg.onload = () => { logoReady = true; };
       logoImg.onerror = () => { logoReady = false; };
       logoImg.src = 'phs_crest.png';
     })();
+
     // --- Helpers ---
     function showToast(text, ok = true) {
       toast.textContent = text;
@@ -204,40 +238,70 @@
       toast.style.display = 'block';
       setTimeout(() => toast.style.display = 'none', 4500);
     }
+
     function getTheme() { return localStorage.getItem('phs_theme') || 'auto'; }
-    function setTheme(mode) { document.documentElement.setAttribute('data-theme', mode); try { localStorage.setItem('phs_theme', mode); } catch {} }
+    function setTheme(mode) {
+      document.documentElement.setAttribute('data-theme', mode);
+      try { localStorage.setItem('phs_theme', mode); } catch {}
+    }
     function toggleTheme() {
       const current = getTheme();
       const next = current === 'dark' ? 'light' : current === 'light' ? 'auto' : 'dark';
-      setTheme(next); showToast(`Theme: ${next}`);
+      setTheme(next);
+      showToast(`Theme: ${next}`);
     }
+
     function persist() {
       const data = {
         student: nameInput.value || '',
-        teacherIdx: teacherSelect.value,
+        teacherId: teacherSelect.value || '',
         teacherEmail: teacherEmail.value || '',
         customTeacherName: customTeacherName.value || '',
-        subject: subjectInput.value || ''
+        subjectId: subjectSelect.value || '',
+        projectId: projectSelect.value || '',
+        customProjectText: customProjectInput.value || ''
       };
       try { localStorage.setItem('printme_pref', JSON.stringify(data)); } catch {}
     }
+
     function restore() {
       try {
         const data = JSON.parse(localStorage.getItem('printme_pref') || '{}');
         if (data.student) nameInput.value = data.student;
-        if (typeof data.teacherIdx !== 'undefined') teacherSelect.value = data.teacherIdx;
-        if (data.teacherEmail) teacherEmail.value = data.teacherEmail;
         if (data.customTeacherName) customTeacherName.value = data.customTeacherName;
-        if (data.subject) subjectInput.value = data.subject;
-        handleTeacherSelectChange();
+        if (data.teacherId) teacherSelect.value = data.teacherId;
+        if (data.teacherEmail) teacherEmail.value = data.teacherEmail;
+
+        // apply teacher filter to subjects
+        handleTeacherSelectChange(false); // false = don't persist during restore
+
+        if (data.subjectId) {
+          subjectSelect.value = data.subjectId;
+          populateProjects(data.subjectId);
+        }
+
+        if (data.projectId) {
+          projectSelect.value = data.projectId;
+        }
+
+        if (data.customProjectText) {
+          customProjectInput.value = data.customProjectText;
+          customProjectGroup.style.display = '';
+        }
+
+        updateSubjectTextFromSelections();
       } catch {}
     }
+
     function loadRecentStudents() {
       try {
         const arr = JSON.parse(localStorage.getItem('recent_students') || '[]');
         recentStudentsDL.innerHTML = arr.map(s => `<option value="${s}"></option>`).join('');
-      } catch { recentStudentsDL.innerHTML = ''; }
+      } catch {
+        recentStudentsDL.innerHTML = '';
+      }
     }
+
     function pushRecentStudent(name) {
       const s = (name || '').trim(); if (!s) return;
       try {
@@ -247,37 +311,110 @@
         loadRecentStudents();
       } catch {}
     }
-    function populateTeachers() {
-      const opts = TEACHERS.map((t, i) => `<option value="${i}">${t.name}</option>`).join('') + `<option value="custom">Custom…</option>`;
-      teacherSelect.innerHTML = opts;
-      teacherEmail.value = TEACHERS[0]?.email || '';
-      teacherList.innerHTML = TEACHERS.map(t => `<li><span>${t.name}</span><span><code>${t.email}</code></span></li>`).join('');
+
+    // --- JSON-driven selections ---
+    function populateTeachersFromSelections(filterSubjectId) {
+      const teachers = filterSubjectId
+        ? selections.teachers.filter(t => (t.subjects || []).includes(filterSubjectId))
+        : selections.teachers;
+
+      const options = teachers.map(t => `<option value="${t.id}">${t.name}</option>`);
+      options.push('<option value="custom">Custom…</option>');
+      teacherSelect.innerHTML = options.join('');
+
+      // default selection
+      if (teachers[0]) {
+        teacherSelect.value = teachers[0].id;
+        teacherEmail.value = teachers[0].email || '';
+      } else {
+        teacherSelect.value = 'custom';
+        teacherEmail.value = '';
+      }
+
+      // quick reference list = all known teachers
+      teacherList.innerHTML = selections.teachers
+        .map(t => `<li><span>${t.name}</span><span><code>${t.email}</code></span></li>`)
+        .join('');
     }
+
+    function populateSubjects(filterTeacherId) {
+      let availableSubjects = selections.subjects;
+
+      if (filterTeacherId && filterTeacherId !== 'custom') {
+        const teacher = selections.teachers.find(t => t.id === filterTeacherId);
+        if (teacher) {
+          availableSubjects = selections.subjects.filter(s => (teacher.subjects || []).includes(s.id));
+        }
+      }
+
+      const options = ['<option value="">Select subject…</option>'].concat(
+        availableSubjects.map(s => `<option value="${s.id}">${s.label}</option>`)
+      );
+
+      subjectSelect.innerHTML = options.join('');
+    }
+
+    function populateProjects(subjectId) {
+      const projects = selections.projects.filter(p => p.subjectId === subjectId);
+      const options = ['<option value="">Select project…</option>'].concat(
+        projects.map(p => `<option value="${p.id}">${p.label}</option>`)
+      );
+      projectSelect.innerHTML = options.join('');
+      projectSelect.disabled = projects.length === 0;
+      if (projects.length === 0) projectSelect.value = '';
+      customProjectGroup.style.display = 'none';
+      customProjectInput.value = '';
+    }
+
     function formatTimestamp() {
-      const now = new Date(); const pad = n => String(n).padStart(2, '0');
-      const YYYY = now.getFullYear(), MM = pad(now.getMonth()+1), DD = pad(now.getDate()), hh = pad(now.getHours()), mm = pad(now.getMinutes());
-      return { display: now.toLocaleString([], { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' }), compact: `${YYYY}${MM}${DD}_${hh}${mm}` };
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const YYYY = now.getFullYear(), MM = pad(now.getMonth()+1), DD = pad(now.getDate());
+      const hh = pad(now.getHours()), mm = pad(now.getMinutes());
+      return {
+        display: now.toLocaleString([], { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' }),
+        compact: `${YYYY}${MM}${DD}_${hh}${mm}`
+      };
     }
+
     function getSelectedTeacherName() {
-      const idx = teacherSelect.value;
-      return idx === 'custom' ? (customTeacherName.value || '').trim() : (TEACHERS[Number(idx)]?.name || '');
+      const val = teacherSelect.value;
+      if (val === 'custom') return (customTeacherName.value || '').trim();
+      const t = selections.teachers.find(t => t.id === val);
+      return t ? t.name : '';
     }
+
+    function getSelectedSubjectLabel() {
+      const subjId = subjectSelect.value;
+      const s = selections.subjects.find(s => s.id === subjId);
+      return s ? s.label : '';
+    }
+
+    function getSelectedProjectMeta() {
+      const projId = projectSelect.value;
+      return selections.projects.find(p => p.id === projId) || null;
+    }
+
     // ---------- MULTI-LINE STAMP ----------
     function buildStampText() {
       const studentName = (nameInput.value || '').trim();
       const teacherName = getSelectedTeacherName();
       const subj = (subjectInput.value || '').trim();
       const tsObj = formatTimestamp();
+
       const line1 = [studentName, teacherName].filter(Boolean).join(' • ');
       const line2 = ['Pukekohe High School', tsObj.display].join(' • ');
       const line3 = subj ? subj : null;
+
       const lines = [line1, line2, line3].filter(Boolean);
       return { lines, studentName, teacherName, subject: subj, tsDisplay: tsObj.display, tsCompact: tsObj.compact };
     }
+
     function updateOverlay() {
       const { lines } = buildStampText();
       overlayText.textContent = lines.join('\n');
     }
+
     function roundRect(ctx, x, y, w, h, r) {
       const rr = Math.min(r, w/2, h/2);
       ctx.beginPath();
@@ -288,71 +425,121 @@
       ctx.arcTo(x, y, x+w, y, rr);
       ctx.closePath();
     }
+
     function drawStampMultiline(ctx, lines, w, h) {
       const margin = Math.max(12, Math.round(w * 0.012));
       const fontSize = Math.max(20, Math.round(w * 0.03));
       const lineH = Math.round(fontSize * 1.25);
       const padX = Math.round(fontSize * 0.6);
       const padY = Math.round(fontSize * 0.5);
+
       ctx.font = `600 ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
       ctx.textBaseline = 'top';
+
       let maxWidth = 0;
       for (const ln of lines) maxWidth = Math.max(maxWidth, ctx.measureText(ln).width);
+
       const boxW = Math.ceil(maxWidth + padX * 2);
       const boxH = Math.ceil(lines.length * lineH + padY * 2);
       const x = w - margin - boxW, y = margin;
+
       ctx.save();
       roundRect(ctx, x, y, boxW, boxH, Math.round(fontSize * 0.5));
       ctx.fillStyle = 'rgba(0,0,0,0.55)';
       ctx.fill();
-      ctx.fillStyle = '#fff'; ctx.textAlign = 'right';
-      const tx = x + boxW - padX; let ty = y + padY;
-      for (const ln of lines) { ctx.fillText(ln, tx, ty); ty += lineH; }
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'right';
+
+      const tx = x + boxW - padX;
+      let ty = y + padY;
+      for (const ln of lines) {
+        ctx.fillText(ln, tx, ty);
+        ty += lineH;
+      }
       ctx.restore();
+
+      // Crest bottom-right
       if (logoReady) {
         const targetW = Math.max(48, Math.round(w * 0.12));
         const scale = targetW / logoImg.naturalWidth;
         const targetH = Math.round(logoImg.naturalHeight * scale);
         const gap = Math.round(w * 0.02);
         const lx = w - targetW - gap, ly = h - targetH - gap;
+
         ctx.save();
         roundRect(ctx, lx - 6, ly - 6, targetW + 12, targetH + 12, 10);
-        ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fill();
+        ctx.fillStyle = 'rgba(0,0,0,0.35)';
+        ctx.fill();
         ctx.drawImage(logoImg, lx, ly, targetW, targetH);
         ctx.restore();
       }
     }
+
+    function sanitizeName(str) {
+      return (str || '')
+        .normalize('NFKD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+    }
+
+    function buildFilename({ studentName, teacherName, tsCompact }) {
+      const s = sanitizeName(studentName) || 'Unknown';
+      const t = sanitizeName(teacherName) || 'Unknown';
+      return `PHS_${s}_${t}_${tsCompact}.jpg`;
+    }
+
+    function updateSubjectTextFromSelections() {
+      const subjLabel = getSelectedSubjectLabel();
+      const projMeta = getSelectedProjectMeta();
+      let projectLabel = projMeta?.label || '';
+
+      if (projMeta?.allowCustomName && customProjectInput.value.trim()) {
+        projectLabel = customProjectInput.value.trim();
+      }
+
+      subjectInput.value = [subjLabel, projectLabel].filter(Boolean).join(' — ');
+      updateOverlay();
+      persist();
+    }
+
     // ---------- STAMPING FLOW ----------
     function stampFromImage(img) {
       const maxW = 800;
       const scale = Math.min(1, maxW / img.naturalWidth);
       const w = Math.round(img.naturalWidth * scale), h = Math.round(img.naturalHeight * scale);
+
       canvas.width = w; canvas.height = h;
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, w, h);
+
       const { lines, studentName, teacherName, subject, tsDisplay, tsCompact } = buildStampText();
       drawStampMultiline(ctx, lines, w, h);
+
       preview.src = canvas.toDataURL('image/jpeg', 0.85);
       preview.style.display = 'block';
       video.style.display = 'none';
+
       return new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.85)).then(blob => {
         const fname = buildFilename({ studentName, teacherName, tsCompact });
         stampedFile = new File([blob], fname, { type: 'image/jpeg' });
-        lastMeta = { studentName: studentName || 'Unknown', teacherName: teacherName || 'Unknown', teacherEmail: teacherEmail.value || '', subject: subject || '', ts: tsDisplay, filename: fname };
+
+        lastMeta = {
+          studentName: studentName || 'Unknown',
+          teacherName: teacherName || 'Unknown',
+          teacherEmail: teacherEmail.value || '',
+          subject: subject || '',
+          ts: tsDisplay,
+          filename: fname
+        };
+
         shareBtn.disabled = false;
         downloadBtn.disabled = false;
         pushRecentStudent(studentName);
         showToast('Photo ready. Tap Share or Download.');
       });
     }
-    function sanitizeName(str) {
-      return (str || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
-    }
-    function buildFilename({ studentName, teacherName, tsCompact }) {
-      const s = sanitizeName(studentName) || 'Unknown';
-      const t = sanitizeName(teacherName) || 'Unknown';
-      return `PHS_${s}_${t}_${tsCompact}.jpg`;
-    }
+
     async function initCamera() {
       try {
         const constraints = { audio: false, video: { facingMode: { ideal: 'environment' } } };
@@ -366,37 +553,55 @@
         showToast('Could not access camera. Allow permission in browser settings.', false);
       }
     }
+
     async function captureAndStamp() {
       if (!stream) {
         await initCamera();
         if (!stream) return;
       }
-      if (!nameInput.value.trim() || !teacherSelect.value) return showToast('Enter student name and select teacher.', false);
+      if (!nameInput.value.trim() || !teacherSelect.value) {
+        return showToast('Enter student name and select teacher.', false);
+      }
       const vw = video.videoWidth, vh = video.videoHeight;
       if (!vw || !vh) return showToast('Camera not ready. Try again.', false);
-      const off = document.createElement('canvas'); off.width = vw; off.height = vh;
+
+      const off = document.createElement('canvas');
+      off.width = vw; off.height = vh;
       off.getContext('2d').drawImage(video, 0, 0);
-      const img = new Image(); img.onload = () => stampFromImage(img);
+
+      const img = new Image();
+      img.onload = () => stampFromImage(img);
       img.src = off.toDataURL('image/jpeg', 0.9);
     }
+
     async function chooseFileAndStamp() {
-      if (!nameInput.value.trim() || !teacherSelect.value) return showToast('Enter student name and select teacher.', false);
+      if (!nameInput.value.trim() || !teacherSelect.value) {
+        return showToast('Enter student name and select teacher.', false);
+      }
       const f = fileInput.files && fileInput.files[0];
       if (!f) return showToast('Choose a photo first.', false);
+
       const url = URL.createObjectURL(f);
       const img = new Image();
       img.onload = () => { URL.revokeObjectURL(url); stampFromImage(img); };
       img.src = url;
     }
+
     async function sharePhoto() {
       if (!stampedFile) return showToast('No image to share. Capture or choose first.', false);
+
       const body = `Student: ${lastMeta?.studentName || 'Unknown'}
 Teacher: ${lastMeta?.teacherName || 'Unknown'} (${lastMeta?.teacherEmail || ''})
 Subject: ${lastMeta?.subject || '-'}
 Time: ${lastMeta?.ts || ''}`;
+
       if (navigator.canShare && navigator.canShare({ files: [stampedFile] })) {
         try {
-          await navigator.share({ files: [stampedFile], title: lastMeta?.filename || 'printme', text: body });
+          await navigator.share({
+            files: [stampedFile],
+            title: lastMeta?.filename || 'PHS evidence',
+            text: body
+          });
           showToast('Shared. Choose your email app to send.');
         } catch (err) {
           console.warn('Share cancelled or failed', err);
@@ -406,13 +611,18 @@ Time: ${lastMeta?.ts || ''}`;
         downloadImage();
       }
     }
+
     function downloadImage() {
       if (!stampedFile) return showToast('Nothing to download yet.', false);
-      const a = document.createElement('a'); a.href = URL.createObjectURL(stampedFile); a.download = lastMeta?.filename || 'photo.jpg';
-      document.body.appendChild(a); a.click();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(stampedFile);
+      a.download = lastMeta?.filename || 'photo.jpg';
+      document.body.appendChild(a);
+      a.click();
       setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
       showToast('Downloaded.');
     }
+
     function clearAll() {
       stampedFile = null;
       lastMeta = null;
@@ -422,33 +632,72 @@ Time: ${lastMeta?.ts || ''}`;
       downloadBtn.disabled = true;
       showToast('Cleared.');
     }
-    function handleTeacherSelectChange() {
-      const idx = teacherSelect.value, isCustom = idx === 'custom';
+
+    function handleTeacherSelectChange(shouldPersist = true) {
+      const idx = teacherSelect.value;
+      const isCustom = idx === 'custom';
       customTeacherGroup.style.display = isCustom ? '' : 'none';
-      if (!isCustom) { const t = TEACHERS[Number(idx)]; teacherEmail.value = t?.email || ''; }
-      updateOverlay(); persist();
+
+      if (!isCustom) {
+        const t = selections.teachers.find(t => t.id === idx);
+        teacherEmail.value = t?.email || '';
+        populateSubjects(idx); // filter subjects this teacher teaches
+      } else {
+        teacherEmail.value = '';
+        populateSubjects(); // all subjects
+      }
+
+      if (shouldPersist) {
+        updateSubjectTextFromSelections();
+      } else {
+        updateOverlay();
+      }
     }
+
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) { if (!shootBtn.disabled) captureAndStamp(); }
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); if (!shareBtn.disabled) sharePhoto(); else if (!downloadBtn.disabled) downloadImage(); }
+      if (e.key === 'Enter' && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+        if (!shootBtn.disabled) captureAndStamp();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        if (!shareBtn.disabled) sharePhoto();
+        else if (!downloadBtn.disabled) downloadImage();
+      }
     });
+
     // --- PWA install prompt & SW registration ---
     window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault(); deferredPrompt = e; installBtn.style.display = '';
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = '';
     });
+
     installBtn?.addEventListener('click', async () => {
       if (!deferredPrompt) return;
-      installBtn.disabled = true; deferredPrompt.prompt();
-      await deferredPrompt.userChoice; deferredPrompt = null; installBtn.style.display = 'none';
+      installBtn.disabled = true;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      installBtn.style.display = 'none';
     });
-    window.addEventListener('appinstalled', () => { installBtn.style.display = 'none'; });
-    function isIosStandalone() { return (window.navigator.standalone === true) || window.matchMedia('(display-mode: standalone)').matches; }
-    function isIos() { return /iphone|ipad|ipod/i.test(window.navigator.userAgent); }
+
+    window.addEventListener('appinstalled', () => {
+      installBtn.style.display = 'none';
+    });
+
+    function isIosStandalone() {
+      return (window.navigator.standalone === true) ||
+             window.matchMedia('(display-mode: standalone)').matches;
+    }
+    function isIos() {
+      return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+    }
     if (isIos() && !isIosStandalone()) {
       // Optional tip:
       // showToast('Tip: On iPhone/iPad, use Share → Add to Home Screen to install.');
     }
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', async () => {
         try {
@@ -463,9 +712,12 @@ Time: ${lastMeta?.ts || ''}`;
             });
           });
           navigator.serviceWorker.addEventListener('controllerchange', () => {});
-        } catch (err) { console.warn('SW registration failed', err); }
+        } catch (err) {
+          console.warn('SW registration failed', err);
+        }
       });
     }
+
     // --- Event wiring ---
     initBtn.addEventListener('click', initCamera);
     helpBtn.addEventListener('click', () => tipsDialog.showModal());
@@ -475,25 +727,73 @@ Time: ${lastMeta?.ts || ''}`;
     shareBtn.addEventListener('click', sharePhoto);
     downloadBtn.addEventListener('click', downloadImage);
     clearBtn.addEventListener('click', clearAll);
-    teacherSelect.addEventListener('change', handleTeacherSelectChange);
+
+    teacherSelect.addEventListener('change', () => handleTeacherSelectChange());
     teacherEmail.addEventListener('input', persist);
     customTeacherName.addEventListener('input', () => { updateOverlay(); persist(); });
     nameInput.addEventListener('input', () => { updateOverlay(); persist(); });
-    subjectInput.addEventListener('input', () => { updateOverlay(); persist(); });
+
+    subjectSelect.addEventListener('change', () => {
+      const subjId = subjectSelect.value;
+      populateProjects(subjId);
+
+      // optional: if picking subject first, filter teachers to those who teach it
+      if (subjId) {
+        populateTeachersFromSelections(subjId);
+      } else {
+        populateTeachersFromSelections();
+      }
+      updateSubjectTextFromSelections();
+    });
+
+    projectSelect.addEventListener('change', () => {
+      const projMeta = getSelectedProjectMeta();
+      const showCustom = !!projMeta?.allowCustomName;
+      customProjectGroup.style.display = showCustom ? '' : 'none';
+      if (!showCustom) customProjectInput.value = '';
+      updateSubjectTextFromSelections();
+    });
+
+    customProjectInput.addEventListener('input', () => {
+      updateSubjectTextFromSelections();
+    });
+
     copyEmailBtn?.addEventListener('click', async () => {
       if (!teacherEmail.value) return showToast('No email to copy', false);
-      try { await navigator.clipboard.writeText(teacherEmail.value); showToast('Email copied'); } catch { showToast('Copy failed', false); }
+      try {
+        await navigator.clipboard.writeText(teacherEmail.value);
+        showToast('Email copied');
+      } catch {
+        showToast('Copy failed', false);
+      }
     });
+
     if (navigator.mediaDevices && navigator.permissions) {
-      navigator.permissions.query({ name: 'camera' }).then(p => { if (p.state === 'granted') initCamera(); }).catch(() => {});
+      navigator.permissions.query({ name: 'camera' }).then(p => {
+        if (p.state === 'granted') initCamera();
+      }).catch(() => {});
     }
+
+    async function loadSelections() {
+      try {
+        const res = await fetch('selections.json');
+        selections = await res.json();
+        populateTeachersFromSelections();
+        populateSubjects();
+        restore();
+      } catch (err) {
+        console.error('Failed to load selections.json', err);
+        showToast('Could not load selections (teachers/subjects).', false);
+        // Fallback: still update overlay
+        updateOverlay();
+      }
+    }
+
     // Init
     (function init(){
       setTheme(getTheme());
-      populateTeachers();
-      restore();
-      updateOverlay();
       loadRecentStudents();
+      loadSelections();
     })();
   </script>
 </body>
