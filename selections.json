@@ -1,0 +1,78 @@
+{
+  "teachers": [
+    {
+      "id": "ry",
+      "name": "Mr Reynolds",
+      "email": "ry@pukekohehigh.school.nz",
+      "subjects": ["eng_l1"]
+    },
+    {
+      "id": "dvm",
+      "name": "Mrs Devaney",
+      "email": "dvm@pukekohehigh.school.nz",
+      "subjects": ["build_l1"]
+    },
+    {
+      "id": "ncc",
+      "name": "Mr Nicholls",
+      "email": "ncc@pukekohehigh.school.nz",
+      "subjects": ["eng_l1", "build_l1"]
+    },
+    {
+      "id": "kpc",
+      "name": "Mr Knapman",
+      "email": "kpc@pukekohehigh.school.nz",
+      "subjects": ["build_l1"]
+    },
+    {
+      "id": "rnr",
+      "name": "Mr Ranson",
+      "email": "rnr@pukekohehigh.school.nz",
+      "subjects": ["eng_l1"]
+    }
+  ],
+  "subjects": [
+    {
+      "id": "eng_l1",
+      "label": "Level 1 – Engineering"
+    },
+    {
+      "id": "build_l1",
+      "label": "Level 1 – Building"
+    }
+  ],
+  "projects": [
+    {
+      "id": "eng_l1_pencil_case",
+      "subjectId": "eng_l1",
+      "label": "Pencil case"
+    },
+    {
+      "id": "eng_l1_marking_gauge",
+      "subjectId": "eng_l1",
+      "label": "Marking gauge"
+    },
+    {
+      "id": "eng_l1_own",
+      "subjectId": "eng_l1",
+      "label": "Own project",
+      "allowCustomName": true
+    },
+    {
+      "id": "build_l1_step_stool",
+      "subjectId": "build_l1",
+      "label": "Step stool"
+    },
+    {
+      "id": "build_l1_planter",
+      "subjectId": "build_l1",
+      "label": "Garden planter"
+    },
+    {
+      "id": "build_l1_own",
+      "subjectId": "build_l1",
+      "label": "Own project",
+      "allowCustomName": true
+    }
+  ]
+}
