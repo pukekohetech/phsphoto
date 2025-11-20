@@ -1,6 +1,7 @@
 // Data loaded from selections.json
 let selections = { teachers: [], subjects: [], projects: [] };
 
+// --- Service Worker registration (GitHub Pages /phsphoto) ---
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
@@ -20,7 +21,6 @@ if ('serviceWorker' in navigator) {
     }
   });
 }
-
 
 // UI refs
 const initBtn = document.getElementById('initBtn');
@@ -65,7 +65,7 @@ let deferredPrompt = null;
     logoReady = false;
     console.warn('Logo failed to load (crest-192.png)');
   };
-  // 👇 make sure crest-192.png sits next to index.html (or adjust path)
+  // crest-192.png must sit next to index.html
   logoImg.src = 'crest-192.png';
 })();
 
@@ -155,7 +155,6 @@ function pushRecentStudent(name) {
 // --- JSON-driven selections ---
 // Preserve selected teacher where possible, even when filtering by subject
 function populateTeachersFromSelections(filterSubjectId) {
-  // Remember who was selected *before* we rebuild the list
   const previousId = teacherSelect.value;
 
   const teachers = filterSubjectId
@@ -166,21 +165,13 @@ function populateTeachersFromSelections(filterSubjectId) {
   options.push('<option value="custom">Custom…</option>');
   teacherSelect.innerHTML = options.join('');
 
-  // Decide what should be selected now
   let newId = previousId;
-
-  // If the previously selected teacher is no longer in the list, fall back
   if (!teachers.some(t => t.id === previousId)) {
-    if (teachers[0]) {
-      newId = teachers[0].id;
-    } else {
-      newId = 'custom';
-    }
+    if (teachers[0]) newId = teachers[0].id;
+    else newId = 'custom';
   }
-
   teacherSelect.value = newId;
 
-  // Keep email in sync for non-custom teachers
   if (newId !== 'custom') {
     const t = selections.teachers.find(t => t.id === newId);
     teacherEmail.value = t?.email || '';
@@ -188,7 +179,6 @@ function populateTeachersFromSelections(filterSubjectId) {
     teacherEmail.value = '';
   }
 
-  // quick reference list = all known teachers
   teacherList.innerHTML = selections.teachers
     .map(t => `<li><span>${t.name}</span><span><code>${t.email}</code></span></li>`)
     .join('');
@@ -196,7 +186,6 @@ function populateTeachersFromSelections(filterSubjectId) {
 
 // Preserve subject if still valid for the chosen teacher
 function populateSubjects(filterTeacherId) {
-  // Remember the currently selected subject before we rebuild
   const previousId = subjectSelect.value;
 
   let availableSubjects = selections.subjects;
@@ -214,7 +203,6 @@ function populateSubjects(filterTeacherId) {
 
   subjectSelect.innerHTML = options.join('');
 
-  // Keep the subject if it's still valid for this teacher
   let newId = '';
   if (availableSubjects.some(s => s.id === previousId)) {
     newId = previousId;
@@ -294,7 +282,7 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
-// ✅ Stamp text top-right, crest top-left
+// Stamp text top-right, crest top-left
 function drawStampMultiline(ctx, lines, w, h) {
   const margin = Math.max(12, Math.round(w * 0.012));
   const fontSize = Math.max(20, Math.round(w * 0.03));
@@ -328,21 +316,20 @@ function drawStampMultiline(ctx, lines, w, h) {
   }
   ctx.restore();
 
-// Crest TOP-LEFT (clean — no rounded box)
-if (logoReady) {
-  const targetW = Math.max(48, Math.round(w * 0.12));
-  const scale = targetW / logoImg.naturalWidth;
-  const targetH = Math.round(logoImg.naturalHeight * scale);
-  const gap = Math.round(w * 0.02);
+  // Crest TOP-LEFT (no extra box)
+  if (logoReady) {
+    const targetW = Math.max(48, Math.round(w * 0.12));
+    const scale = targetW / logoImg.naturalWidth;
+    const targetH = Math.round(logoImg.naturalHeight * scale);
+    const gap = Math.round(w * 0.02);
 
-  const lx = gap; // left
-  const ly = gap; // top
+    const lx = gap; // left
+    const ly = gap; // top
 
-  ctx.save();
-  ctx.drawImage(logoImg, lx, ly, targetW, targetH);
-  ctx.restore();
-}
-
+    ctx.save();
+    ctx.drawImage(logoImg, lx, ly, targetW, targetH);
+    ctx.restore();
+  }
 }
 
 function sanitizeName(str) {
@@ -514,15 +501,14 @@ function handleTeacherSelectChange(shouldPersist = true) {
   if (!isCustom) {
     const t = selections.teachers.find(t => t.id === idx);
     teacherEmail.value = t?.email || '';
-    populateSubjects(idx); // may keep or change the current subject
+    populateSubjects(idx);
   } else {
     teacherEmail.value = '';
-    populateSubjects(); // all subjects
+    populateSubjects();
   }
 
   const newSubjectId = subjectSelect.value;
 
-  // Only touch projects if the subject actually changed
   if (newSubjectId !== prevSubjectId) {
     populateProjects(newSubjectId);
   }
@@ -546,7 +532,7 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// --- PWA install prompt & SW registration ---
+// --- PWA install prompt (optional install button) ---
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
@@ -574,79 +560,8 @@ function isIos() {
   return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
 }
 if (isIos() && !isIosStandalone()) {
-  // Optional tip:
-  // showToast('Tip: On iPhone/iPad, use Share → Add to Home Screen to install.');
+  // Optional: showToast('Tip: On iPhone/iPad, use Share → Add to Home Screen to install.');
 }
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
-    try {
-      const reg = await navigator.serviceWorker.register('./service-worker.js');
-      if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-      reg.addEventListener('updatefound', () => {
-        const sw = reg.installing;
-        sw?.addEventListener('statechange', () => {
-          if (sw.state === 'installed' && navigator.serviceWorker.controller) {
-            showToast('Update available. Reload for latest.');
-          }
-        });
-      });
-      navigator.serviceWorker.addEventListener('controllerchange', () => {});
-    } catch (err) {
-      console.warn('SW registration failed', err);
-    }
-  });
-}
-
-// --- Event wiring ---
-initBtn.addEventListener('click', initCamera);
-helpBtn.addEventListener('click', () => tipsDialog.showModal());
-themeBtn.addEventListener('click', toggleTheme);
-shootBtn.addEventListener('click', captureAndStamp);
-fileStampBtn.addEventListener('click', chooseFileAndStamp);
-shareBtn.addEventListener('click', sharePhoto);
-downloadBtn.addEventListener('click', downloadImage);
-clearBtn.addEventListener('click', clearAll);
-
-teacherSelect.addEventListener('change', () => handleTeacherSelectChange());
-teacherEmail.addEventListener('input', persist);
-customTeacherName.addEventListener('input', () => { updateOverlay(); persist(); });
-nameInput.addEventListener('input', () => { updateOverlay(); persist(); });
-
-subjectSelect.addEventListener('change', () => {
-  const subjId = subjectSelect.value;
-  populateProjects(subjId);
-
-  // optional: if picking subject first, filter teachers to those who teach it
-  if (subjId) {
-    populateTeachersFromSelections(subjId);
-  } else {
-    populateTeachersFromSelections();
-  }
-  updateSubjectTextFromSelections();
-});
-
-projectSelect.addEventListener('change', () => {
-  const projMeta = getSelectedProjectMeta();
-  const showCustom = !!projMeta?.allowCustomName;
-  customProjectGroup.style.display = showCustom ? '' : 'none';
-  if (!showCustom) customProjectInput.value = '';
-  updateSubjectTextFromSelections();
-});
-
-customProjectInput.addEventListener('input', () => {
-  updateSubjectTextFromSelections();
-});
-
-copyEmailBtn?.addEventListener('click', async () => {
-  if (!teacherEmail.value) return showToast('No email to copy', false);
-  try {
-    await navigator.clipboard.writeText(teacherEmail.value);
-    showToast('Email copied');
-  } catch {
-    showToast('Copy failed', false);
-  }
-});
 
 if (navigator.mediaDevices && navigator.permissions) {
   navigator.permissions.query({ name: 'camera' }).then(p => {
@@ -664,7 +579,6 @@ async function loadSelections() {
   } catch (err) {
     console.error('Failed to load selections.json', err);
     showToast('Could not load selections (teachers/subjects).', false);
-    // Fallback: still update overlay
     updateOverlay();
   }
 }
