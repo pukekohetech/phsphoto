@@ -1,7 +1,7 @@
-// sw.js – Offline-first PWA for PHS Stamper
+// service-worker.js – Offline-first PWA for PHS Stamper
 
 // Bump the version when you change HTML/CSS/JS/JSON/icons
-const CACHE_NAME = 'phs-stamper-v101';
+const CACHE_NAME = 'phs-stamper-v1025';
 
 const CORE_ASSETS = [
   './',
@@ -37,15 +37,26 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  const { request } = event;
-  if (request.method !== 'GET' || !request.url.startsWith('http')) return;
+  const req = event.request;
 
+  // Only handle GET over http/https
+  if (req.method !== 'GET' || !req.url.startsWith('http')) return;
+
+  // For navigation (when the app starts up from the icon), always fall back to index.html
+  if (req.mode === 'navigate') {
+    event.respondWith(
+      fetch(req).catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  // For everything else (CSS/JS/JSON/images): cache-first, then network, then offline fallback
   event.respondWith(
-    caches.match(request).then(cached => {
-      const network = fetch(request)
+    caches.match(req).then(cached => {
+      const network = fetch(req)
         .then(response => {
           if (response && response.status === 200) {
-            caches.open(CACHE_NAME).then(cache => cache.put(request, response.clone()));
+            caches.open(CACHE_NAME).then(cache => cache.put(req, response.clone()));
           }
           return response;
         })
