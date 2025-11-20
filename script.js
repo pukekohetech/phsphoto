@@ -1,6 +1,27 @@
 // Data loaded from selections.json
 let selections = { teachers: [], subjects: [], projects: [] };
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    try {
+      const reg = await navigator.serviceWorker.register('/phsphoto/service-worker.js');
+      if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+      reg.addEventListener('updatefound', () => {
+        const sw = reg.installing;
+        sw?.addEventListener('statechange', () => {
+          if (sw.state === 'installed' && navigator.serviceWorker.controller) {
+            showToast('Update available. Reload for latest.');
+          }
+        });
+      });
+      navigator.serviceWorker.addEventListener('controllerchange', () => {});
+    } catch (err) {
+      console.warn('SW registration failed', err);
+    }
+  });
+}
+
+
 // UI refs
 const initBtn = document.getElementById('initBtn');
 const helpBtn = document.getElementById('helpBtn');
