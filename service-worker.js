@@ -4,7 +4,7 @@
 const ROOT = '/phsphoto/';
 
 // Bump version when core assets change
-const CACHE_NAME = 'phs-stamper-v220';
+const CACHE_NAME = 'phs-stamper-v225';
 
 const CORE_ASSETS = [
   ROOT,
