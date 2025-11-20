@@ -307,23 +307,21 @@ function drawStampMultiline(ctx, lines, w, h) {
   }
   ctx.restore();
 
-  // Crest TOP-LEFT (moved from bottom-right)
-  if (logoReady) {
-    const targetW = Math.max(48, Math.round(w * 0.12));
-    const scale = targetW / logoImg.naturalWidth;
-    const targetH = Math.round(logoImg.naturalHeight * scale);
-    const gap = Math.round(w * 0.02);
+// Crest TOP-LEFT (clean — no rounded box)
+if (logoReady) {
+  const targetW = Math.max(48, Math.round(w * 0.12));
+  const scale = targetW / logoImg.naturalWidth;
+  const targetH = Math.round(logoImg.naturalHeight * scale);
+  const gap = Math.round(w * 0.02);
 
-    const lx = gap; // from left
-    const ly = gap; // from top
+  const lx = gap; // left
+  const ly = gap; // top
 
-    ctx.save();
-    roundRect(ctx, lx - 6, ly - 6, targetW + 12, targetH + 12, 10);
-    ctx.fillStyle = 'rgba(0,0,0,0.35)';
-    ctx.fill();
-    ctx.drawImage(logoImg, lx, ly, targetW, targetH);
-    ctx.restore();
-  }
+  ctx.save();
+  ctx.drawImage(logoImg, lx, ly, targetW, targetH);
+  ctx.restore();
+}
+
 }
 
 function sanitizeName(str) {
