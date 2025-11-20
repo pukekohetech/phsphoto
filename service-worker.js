@@ -1,7 +1,7 @@
-// service-worker.js – Offline-first PWA for PHS Stamper
+// sw.js – Offline-first PWA for PHS Stamper
 
-// Bump this version whenever you change core assets (HTML/CSS/JS/JSON/icons).
-const CACHE_NAME = 'phs-stamper-v105';
+// Bump the version when you change HTML/CSS/JS/JSON/icons
+const CACHE_NAME = 'phs-stamper-v101';
 
 const CORE_ASSETS = [
   './',
@@ -29,9 +29,7 @@ self.addEventListener('activate', event => {
       self.clients.claim(),
       caches.keys().then(keys =>
         Promise.all(
-          keys
-            .filter(k => k !== CACHE_NAME)
-            .map(k => caches.delete(k))
+          keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
         )
       )
     ])
@@ -40,8 +38,6 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   const { request } = event;
-
-  // Only handle GET requests over HTTP/HTTPS
   if (request.method !== 'GET' || !request.url.startsWith('http')) return;
 
   event.respondWith(
@@ -49,14 +45,11 @@ self.addEventListener('fetch', event => {
       const network = fetch(request)
         .then(response => {
           if (response && response.status === 200) {
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put(request, response.clone());
-            });
+            caches.open(CACHE_NAME).then(cache => cache.put(request, response.clone()));
           }
           return response;
         })
         .catch(() => cached || caches.match('./index.html'));
-
       return cached || network;
     })
   );
