@@ -37,11 +37,15 @@ let stream, stampedFile, lastMeta = null;
 let logoImg = new Image(), logoReady = false;
 let deferredPrompt = null;
 
-// Try to preload crest; optional
-(function preloadLogo(){
+// Try to preload crest
+(function preloadLogo() {
   logoImg.onload = () => { logoReady = true; };
-  logoImg.onerror = () => { logoReady = false; };
-  logoImg.src = 'phs_crest.png';
+  logoImg.onerror = () => {
+    logoReady = false;
+    console.warn('Logo failed to load (crest-192.png)');
+  };
+  // 👇 make sure crest-192.png sits next to index.html (or adjust path)
+  logoImg.src = 'crest-192.png';
 })();
 
 // --- Helpers ---
@@ -269,6 +273,7 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
+// ✅ Stamp text top-right, crest top-left
 function drawStampMultiline(ctx, lines, w, h) {
   const margin = Math.max(12, Math.round(w * 0.012));
   const fontSize = Math.max(20, Math.round(w * 0.03));
@@ -286,6 +291,7 @@ function drawStampMultiline(ctx, lines, w, h) {
   const boxH = Math.ceil(lines.length * lineH + padY * 2);
   const x = w - margin - boxW, y = margin;
 
+  // Top-right text box
   ctx.save();
   roundRect(ctx, x, y, boxW, boxH, Math.round(fontSize * 0.5));
   ctx.fillStyle = 'rgba(0,0,0,0.55)';
@@ -301,13 +307,15 @@ function drawStampMultiline(ctx, lines, w, h) {
   }
   ctx.restore();
 
-  // Crest bottom-right
+  // Crest TOP-LEFT (moved from bottom-right)
   if (logoReady) {
     const targetW = Math.max(48, Math.round(w * 0.12));
     const scale = targetW / logoImg.naturalWidth;
     const targetH = Math.round(logoImg.naturalHeight * scale);
     const gap = Math.round(w * 0.02);
-    const lx = w - targetW - gap, ly = h - targetH - gap;
+
+    const lx = gap; // from left
+    const ly = gap; // from top
 
     ctx.save();
     roundRect(ctx, lx - 6, ly - 6, targetW + 12, targetH + 12, 10);
