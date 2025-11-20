@@ -1,18 +1,21 @@
-// service-worker.js – Offline-first PWA for PHS Stamper
+// service-worker.js – Offline-first PWA for PHS Stamper (GitHub Pages)
 
-// Bump the version when you change HTML/CSS/JS/JSON/icons
-const CACHE_NAME = 'phs-stamper-v1025';
+// App is hosted at: https://pukekohetech.github.io/phsphoto/
+const ROOT = '/phsphoto/';
+
+// Bump version when core assets change
+const CACHE_NAME = 'phs-stamper-v201';
 
 const CORE_ASSETS = [
-  './',
-  './index.html',
-  './styles.css',
-  './script.js',
-  './selections.json',
-  './manifest.webmanifest',
-  './icon-192.png',
-  './icon-512.png',
-  './phs_crest.png'
+  ROOT,
+  ROOT + 'index.html',
+  ROOT + 'styles.css',
+  ROOT + 'script.js',
+  ROOT + 'selections.json',
+  ROOT + 'manifest.webmanifest',
+  ROOT + 'icon-192.png',
+  ROOT + 'icon-512.png',
+  ROOT + 'phs_crest.png'
 ];
 
 self.addEventListener('install', event => {
@@ -42,15 +45,16 @@ self.addEventListener('fetch', event => {
   // Only handle GET over http/https
   if (req.method !== 'GET' || !req.url.startsWith('http')) return;
 
-  // For navigation (when the app starts up from the icon), always fall back to index.html
+  // When the app is launched / navigated to (e.g. from home-screen icon),
+  // always fall back to the cached index.html if offline.
   if (req.mode === 'navigate') {
     event.respondWith(
-      fetch(req).catch(() => caches.match('./index.html'))
+      fetch(req).catch(() => caches.match(ROOT + 'index.html'))
     );
     return;
   }
 
-  // For everything else (CSS/JS/JSON/images): cache-first, then network, then offline fallback
+  // For other requests: cache-first, then network, then offline fallback
   event.respondWith(
     caches.match(req).then(cached => {
       const network = fetch(req)
@@ -60,7 +64,8 @@ self.addEventListener('fetch', event => {
           }
           return response;
         })
-        .catch(() => cached || caches.match('./index.html'));
+        .catch(() => cached || caches.match(ROOT + 'index.html'));
+
       return cached || network;
     })
   );
