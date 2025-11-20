@@ -1,19 +1,19 @@
 {
   "name": "Pukekohe HS Stamper",
   "short_name": "PHS Stamper",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "/phsphoto/",
+  "scope": "/phsphoto/",
   "display": "standalone",
   "background_color": "#2563eb",
   "theme_color": "#2563eb",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "/phsphoto/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icon-512.png",
+      "src": "/phsphoto/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
