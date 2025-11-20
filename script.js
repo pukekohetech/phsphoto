@@ -128,7 +128,7 @@ function pushRecentStudent(name) {
 }
 
 // --- JSON-driven selections ---
-// *** FIXED VERSION: preserves previously selected teacher where possible ***
+// Preserve selected teacher where possible, even when filtering by subject
 function populateTeachersFromSelections(filterSubjectId) {
   // Remember who was selected *before* we rebuild the list
   const previousId = teacherSelect.value;
@@ -169,7 +169,11 @@ function populateTeachersFromSelections(filterSubjectId) {
     .join('');
 }
 
+// Preserve subject if still valid for the chosen teacher
 function populateSubjects(filterTeacherId) {
+  // Remember the currently selected subject before we rebuild
+  const previousId = subjectSelect.value;
+
   let availableSubjects = selections.subjects;
 
   if (filterTeacherId && filterTeacherId !== 'custom') {
@@ -184,6 +188,13 @@ function populateSubjects(filterTeacherId) {
   );
 
   subjectSelect.innerHTML = options.join('');
+
+  // Keep the subject if it's still valid for this teacher
+  let newId = '';
+  if (availableSubjects.some(s => s.id === previousId)) {
+    newId = previousId;
+  }
+  subjectSelect.value = newId;
 }
 
 function populateProjects(subjectId) {
@@ -465,7 +476,10 @@ function clearAll() {
   showToast('Cleared.');
 }
 
+// When teacher changes, preserve subject + project if still valid
 function handleTeacherSelectChange(shouldPersist = true) {
+  const prevSubjectId = subjectSelect.value;
+
   const idx = teacherSelect.value;
   const isCustom = idx === 'custom';
   customTeacherGroup.style.display = isCustom ? '' : 'none';
@@ -473,10 +487,17 @@ function handleTeacherSelectChange(shouldPersist = true) {
   if (!isCustom) {
     const t = selections.teachers.find(t => t.id === idx);
     teacherEmail.value = t?.email || '';
-    populateSubjects(idx); // filter subjects this teacher teaches
+    populateSubjects(idx); // may keep or change the current subject
   } else {
     teacherEmail.value = '';
     populateSubjects(); // all subjects
+  }
+
+  const newSubjectId = subjectSelect.value;
+
+  // Only touch projects if the subject actually changed
+  if (newSubjectId !== prevSubjectId) {
+    populateProjects(newSubjectId);
   }
 
   if (shouldPersist) {
