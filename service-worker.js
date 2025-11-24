@@ -5,7 +5,7 @@ const SW_URL = new URL(self.location);
 const ROOT_PATH = SW_URL.pathname.replace(/service-worker\.js$/, '');
 
 // Bump this whenever you change core assets
-const CACHE_NAME = 'phs-stamper-v280';
+const CACHE_NAME = 'phs-stamper-v281';
 
 // Helper to build paths under the app root
 function atRoot(path) {
