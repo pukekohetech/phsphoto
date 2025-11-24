@@ -223,27 +223,29 @@ button[disabled], button:disabled {
 .stamp-overlay,
 #overlayText {
   position: absolute;
-  right: clamp(8px, 2vw, 16px);
-  bottom: clamp(8px, 2vw, 16px);
-  padding: 0.4em 0.9em;
+
+  /* Must match canvas: outerPad = 2% of min(w,h) */
+  right: 2%;
+  bottom: 2%;
+
+  /* Must match canvas: inner padding depends on font size */
+  padding: 0.45em 0.85em;
   border-radius: 10px;
 
-  /* Same as canvas gradient */
   background: linear-gradient(
     to top,
     rgba(15,23,42,0.95),
     rgba(15,23,42,0.7),
     transparent
   );
-
   color: #fff;
   font-weight: 600;
 
-  /* vmin scaling prevents portrait text from exploding */
-  font-size: clamp(11px, 1.2vmin + 9px, 16px);
-  line-height: 1.3;
+  /* Must match canvas: font = ~3% of min dimension */
+  font-size: 3vmin;
+  line-height: 1.25;
 
-  max-width: 80%;
+  max-width: 78%;
   text-align: right;
   white-space: pre-line;
 
