@@ -1,586 +1,307 @@
-/* ============================================================
-   THEME VARIABLES 
-   ============================================================ */
 :root {
-  --phs-maroon: #6e1818;
-  --phs-maroon-soft: #8b1f1f;
-  --bg-body: #f3f5fb;
-  --bg-card: #ffffff;
-  --bg-soft: #f8fafc;
-  --text-main: #1f2933;
-  --text-muted: #6b7b8f;
-  --border-subtle: #dde2eb;
-  --radius-lg: 14px;
-  --radius-md: 10px;
-  --shadow-soft: 0 14px 30px rgba(15, 23, 42, 0.12);
-  --shadow-subtle: 0 4px 12px rgba(15, 23, 42, 0.08);
-  --transition-fast: 0.18s ease-out;
+  color-scheme: light dark;
+  --bg: canvas;
+  --fg: canvastext;
+  --border: color-mix(in oklab, currentColor 25%, transparent);
+  --accent: #2563eb;
+  --ok: #16a34a;
+  --err: #dc2626;
+  --radius: 12px;
+  --space: clamp(10px, 2.2vw, 18px);
+  --field-pad: clamp(10px, 1.8vw, 14px);
+  --font: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Arial,
+    sans-serif;
 }
 
-/* Keep data-theme attribute for JS */
-html[data-theme="light"] { color-scheme: light; }
-html[data-theme="dark"]  { color-scheme: dark; }
-html[data-theme="auto"]  { color-scheme: light dark; }
-
-/* ============================================================
-   GLOBAL RESET & BASE
-   ============================================================ */
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 
-html,
 body {
-  min-height: 100%;
+  font-family: var(--font);
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
 }
 
-body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont,
-               "Segoe UI", sans-serif;
-  background: radial-gradient(circle at top left, #edf2ff 0, #f9fafb 45%, #e5ecff 100%);
-  color: var(--text-main);
-  padding: 16px;
-  display: flex;
-  justify-content: center;
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--space);
+  display: grid;
+  gap: var(--space);
 }
 
-/* Outer app shell */
-#app {
-  width: 100%;
-  max-width: 1120px;
-  margin: auto;
+h1,
+h2,
+h3 {
+  margin: 0;
 }
 
-/* ============================================================
-   HEADER / HERO
-   ============================================================ */
-.app-header {
-  margin-bottom: 16px;
-}
-
-.hero {
-  background: radial-gradient(circle at top left, #fef2f2 0, #fff 42%, #eef2ff 100%);
-  border-radius: 24px;
-  padding: 18px 18px 14px 18px;
-  box-shadow: var(--shadow-soft);
-  border: 1px solid rgba(148, 163, 184, 0.45);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Crest-style badge in hero */
-.hero::before {
-  content: "";
-  position: absolute;
-  right: -60px;
-  bottom: -40px;
-  width: 220px;
-  height: 220px;
-  background-image: url("crest-192.png");
-  background-repeat: no-repeat;
-  background-size: contain;
-  opacity: 0.10;
-  transform: rotate(-10deg);
-  pointer-events: none;
-}
-
-.hero-inner {
-  display: flex;
-  gap: 18px;
-  align-items: center;
-}
-
-.hero-brand {
-  flex: 1;
-}
-
-.hero-koru {
-  width: 60px;
-  height: 60px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, var(--phs-maroon) 0%, #3b0d0d 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fef2f2;
-  font-size: 30px;
-  box-shadow: 0 18px 32px rgba(148, 27, 33, 0.35);
-}
-
-.app-title {
-  font-size: clamp(1.4rem, 1.1rem + 1vw, 1.6rem);
-  font-weight: 700;
-  letter-spacing: 0.03em;
+h2 {
   margin-bottom: 4px;
-  color: #0f172a;
+  font-size: clamp(18px, 2.2vw, 24px);
 }
 
-.app-subtitle {
-  font-size: 0.92rem;
-  color: var(--text-muted);
-  max-width: 460px;
+.sub {
+  opacity: 0.7;
+  font-size: clamp(12px, 1.6vw, 14px);
 }
 
-/* Hero action row */
-.hero-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: flex-end;
+/* Layout cards left / right */
+.layout {
+  display: grid;
+  gap: var(--space);
 }
 
-.hero-badge {
-  background: rgba(15, 23, 42, 0.9);
-  color: #e5f0ff;
-  border-radius: 999px;
-  padding: 6px 12px;
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.45);
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: 1.1fr minmax(320px, 520px);
+    align-items: flex-start;
+  }
 }
 
-.hero-badge span {
-  font-size: 1rem;
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space);
+  background: color-mix(in oklab, var(--bg) 92%, var(--fg) 8%);
 }
 
-/* ============================================================
-   BUTTONS
-   ============================================================ */
-
-.btn-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-button,
-.btn {
-  appearance: none;
-  border: none;
-  border-radius: 999px;
-  padding: 9px 14px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  background: #e5e7eb;
-  color: #111827;
-  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.15);
-  transform: translateY(0);
-  transition:
-    transform var(--transition-fast),
-    box-shadow var(--transition-fast),
-    background var(--transition-fast),
-    color var(--transition-fast),
-    border-color var(--transition-fast),
-    opacity var(--transition-fast);
-}
-
-button.primary,
-.btn.primary {
-  background: linear-gradient(135deg, var(--phs-maroon) 0%, #3b0d0d 100%);
-  color: #fefcfb;
-  box-shadow: 0 20px 40px rgba(110, 24, 24, 0.55);
-}
-
-button.ghost,
-.btn.ghost {
-  background: transparent;
-  color: var(--phs-maroon);
-  border: 1px solid rgba(148, 27, 33, 0.25);
-  box-shadow: none;
-}
-
-button.danger,
-.btn.danger {
-  background: #fee2e2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
-  box-shadow: 0 8px 16px rgba(185, 28, 28, 0.25);
-}
-
-button:disabled,
-.btn:disabled {
-  opacity: 0.55;
-  cursor: default;
-  box-shadow: none;
-  transform: none;
-}
-
-button:not(:disabled):hover,
-.btn:not(:disabled):hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.2);
-}
-
-button:not(:disabled):active,
-.btn:not(:disabled):active {
-  transform: translateY(1px);
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.18);
-}
-
-/* Icon inside button */
-button span.icon {
-  font-size: 1.1rem;
-}
-
-/* ============================================================
-   GRID LAYOUT
-   ============================================================ */
-
-.grid {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 12px;
+/* Form + general controls */
+.fields {
+  display: grid;
+  gap: var(--space);
 }
 
 .row {
-  display: flex;
-  gap: 16px;
+  display: grid;
+  gap: var(--space);
 }
 
-.row--2 > * {
-  flex: 1;
-}
-
-/* Panels (cards) */
-.panel {
-  background: var(--bg-card);
-  border-radius: 22px;
-  padding: 16px 18px 18px;
-  box-shadow: var(--shadow-subtle);
-  border: 1px solid rgba(148, 163, 184, 0.45);
-  position: relative;
-}
-
-.panel + .panel {
-  margin-top: 10px;
-}
-
-/* Tiny PHS stripe at panel top */
-.panel::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 18px;
-  right: 18px;
-  height: 3px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--phs-maroon) 0%, #f97316 50%, #1d4ed8 100%);
-}
-
-/* Stacked layout helper */
-.stack {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-/* ============================================================
-   TYPOGRAPHY / LABELS / INPUTS
-   ============================================================ */
-
-h2,
-h3 {
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  font-size: 0.9rem;
-  color: #0f172a;
-  margin-bottom: 6px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.inline {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 10px;
-}
-
-.pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 8px;
-  border-radius: 999px;
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  border: 1px solid rgba(148, 163, 184, 0.7);
-  color: #4b5563;
-  background: #f9fafb;
-}
-
-.pill.muted {
-  opacity: 0.8;
-}
-
-.small {
-  font-size: 0.8rem;
-}
-
-.muted {
-  color: var(--text-muted);
-}
-
-.hint {
-  font-size: 0.8rem;
-  color: var(--text-muted);
+@media (min-width: 600px) {
+  .row--2 {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 label {
   display: block;
   margin-bottom: 6px;
-  font-weight: 600;
-  color: var(--text-main);
-  font-size: 0.9rem;
+  font-size: clamp(12px, 1.6vw, 14px);
 }
 
 input,
 select,
+button,
 textarea {
   width: 100%;
-  padding: 10px 11px;
-  border-radius: 10px;
-  border: 1px solid var(--border-subtle);
-  background: rgba(248, 250, 252, 0.9);
-  font-size: 0.97rem;
-  font-family: inherit;
-  color: var(--text-main);
-  line-height: 1.5;
-  transition:
-    border var(--transition-fast),
-    box-shadow var(--transition-fast),
-    background var(--transition-fast),
-    transform var(--transition-fast);
+  font: inherit;
+  padding: var(--field-pad);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: inherit;
+  color: inherit;
 }
 
-input::placeholder,
-textarea::placeholder {
-  color: #a0aec0;
+textarea {
+  resize: vertical;
 }
 
 input:focus,
 select:focus,
+button:focus,
 textarea:focus {
-  outline: none;
-  border-color: rgba(148, 163, 184, 0.9);
-  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.4);
-  background: #ffffff;
-  transform: translateY(-0.5px);
+  outline: 3px solid
+    color-mix(in oklab, var(--accent) 40%, transparent);
+  outline-offset: 2px;
 }
 
-/* Two-column form layout */
-.row.row--2 .stack {
-  flex: 1 1 0;
-}
-
-/* ============================================================
-   CAMERA / MEDIA
-   ============================================================ */
-
-#video.media,
-#preview.media {
-  display: block;
-  width: 100%;
-  border-radius: 18px;
-  background: #020617;
-  border: 1px solid rgba(15, 23, 42, 0.85);
-  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.6);
-}
-
-/* Overlay holder for stamp preview */
-.overlay-wrap {
-  position: relative;
-  border-radius: 18px;
-  overflow: hidden;
-}
-
-/* The stamped overlay area at bottom of image */
-.stamp-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 10px;
-  min-height: 56px;
-  padding: 10px 14px 12px 64px;
+.btn-row {
   display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-  background: linear-gradient(
-    to top,
-    rgba(15, 23, 42, 0.95),
-    rgba(15, 23, 42, 0.75),
-    transparent
-  );
-  color: #f9fafb;
-  font-size: 0.86rem;
-  line-height: 1.4;
-  white-space: pre-line;
-  text-align: right;
-  pointer-events: none;
-
-  background-image: url('crest-192.png');
-  background-repeat: no-repeat;
-  background-size: 42px auto;
-  background-position: 14px 50%;
+  flex-wrap: wrap;
+  gap: var(--space);
 }
 
-/* Captured preview image */
-#preview.media {
-  margin-top: 10px;
-  border: 1px solid rgba(148, 163, 184, 0.5);
-  background: #020617;
+button {
+  cursor: pointer;
+  transition: transform 0.06s ease, box-shadow 0.06s ease,
+    background 0.12s ease;
 }
 
-/* Stamp crest (if used separately in canvas) */
-.stamp-crest {
-  position: absolute;
-  left: 14px;
-  bottom: 14px;
-  width: 42px;
-  height: 42px;
+button:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) inset;
 }
 
-/* ============================================================
-   TEACHER LIST
-   ============================================================ */
-
-.teachers {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 10px;
+.primary {
+  background: var(--accent);
+  color: #fff;
+  border: none;
 }
 
-.teachers li {
-  background: #f9fafb;
-  border-radius: 12px;
-  padding: 8px 10px;
-  border: 1px solid rgba(209, 213, 219, 0.9);
-  font-size: 0.82rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+.success {
+  background: var(--ok);
+  color: #fff;
+  border: none;
 }
 
-.teachers strong {
-  font-weight: 600;
+.danger {
+  background: var(--err);
+  color: #fff;
+  border: none;
 }
 
-.teachers .small {
-  color: var(--text-muted);
+button[disabled],
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
-/* ============================================================
-   TOAST
-   ============================================================ */
+/* Theme / small buttons (if you use them) */
+.btn-small {
+  width: auto;
+  padding-inline: 0.9em;
+  font-size: 0.85rem;
+}
 
+/* Toast */
 .toast {
-  position: fixed;
-  bottom: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.95);
-  color: #f9fafb;
-  font-size: 0.8rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.25s ease-out, transform 0.25s ease-out;
-  z-index: 40;
-  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.7);
+  display: none;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: var(--ok);
+  color: #fff;
+  font-size: 0.9rem;
 }
 
 .toast.show {
-  opacity: 1;
-  transform: translate(-50%, -4px);
+  display: block;
 }
 
-/* ============================================================
-   DIALOG
-   ============================================================ */
-
-dialog {
-  border: none;
-  border-radius: 20px;
-  padding: 16px 18px 14px;
-  background: #f9fafb;
-  box-shadow: 0 22px 48px rgba(15, 23, 42, 0.55);
-  border: 1px solid rgba(148, 163, 184, 0.7);
+.toast.error {
+  background: var(--err);
 }
 
-dialog::backdrop {
-  background: rgba(15, 23, 42, 0.7);
+/* Helpers */
+.hint {
+  font-size: clamp(12px, 1.6vw, 14px);
+  opacity: 0.8;
 }
 
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
-
-@media (max-width: 840px) {
-  body {
-    padding: 12px;
-  }
-
-  .hero-inner {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .hero-actions {
-    align-items: flex-start;
-  }
-
-  .panel {
-    border-radius: 18px;
-  }
-
-  .teachers {
-    grid-template-columns: 1fr;
-  }
+.small {
+  font-size: 0.8rem;
+  opacity: 0.75;
 }
 
-@media (max-width: 640px) {
-  .row {
-    flex-direction: column;
-  }
+/* Teacher list (right-hand side list in your new UI) */
+#teacherList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
 
-  .row--2 {
-    flex-direction: column;
-  }
+#teacherList li {
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--border);
+}
 
-  .hero {
-    padding: 14px 14px 12px;
-    border-radius: 18px;
-  }
+#teacherList li:last-child {
+  border-bottom: none;
+}
 
-  button,
-  .btn {
-    width: 100%;
-    justify-content: center;
-  }
+/* ===========================
+   MEDIA AREA: video + preview
+   =========================== */
 
-  .toast {
-    left: 16px;
-    right: 16px;
-    text-align: center;
-  }
+.media-wrap {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #000;
+  border: 1px solid var(--border);
+}
+
+/* Camera + preview share same box */
+.media,
+#video,
+#preview {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  background: #000;
+}
+
+/* If you want preview to letterbox instead of crop, you could change:
+   object-fit: cover; -> contain; */
+
+/* ===========================
+   SHIELD OVERLAY (preview)
+   =========================== */
+
+.shield-overlay,
+#shieldOverlay {
+  position: absolute;
+  left: clamp(8px, 2vw, 16px);
+  top: clamp(8px, 2vw, 16px);
+  width: clamp(40px, 10vmin, 72px);
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+/* ===========================
+   TEXT STAMP OVERLAY (preview)
+   WYSIWYG with stamped image
+   =========================== */
+
+.stamp-overlay,
+#overlayText {
+  position: absolute;
+  right: clamp(8px, 2vw, 16px);
+  bottom: clamp(8px, 2vw, 16px);
+
+  /* Rounded, padded box – matches canvas version */
+  padding: 0.4em 0.9em;
+  border-radius: 10px;
+
+  background: linear-gradient(
+    to top,
+    rgba(15, 23, 42, 0.95),
+    rgba(15, 23, 42, 0.7),
+    transparent
+  );
+  color: #fff;
+  font-weight: 600;
+
+  /* Use vmin so tall portrait phones don’t get massive text */
+  font-size: clamp(11px, 1.2vmin + 9px, 16px);
+  line-height: 1.3;
+
+  max-width: 80%;
+  text-align: right;
+  white-space: pre-line;
+
+  pointer-events: none;
+}
+
+/* If you need to hide overlay in some states, you can just set display:none inline or via a class */
+
+/* PWA install / header extras (optional) */
+.header-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
