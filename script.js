@@ -507,50 +507,65 @@ function drawStampedImage(w, h, drawer) {
 
   console.log("Drawing stamped image", { w, h });
 
+  // Draw the base image
   drawer(ctx);
 
-  const pad = Math.round(w * 0.02);
-  const lh = Math.round(h * 0.03);
+  const [l1, l2, l3] = buildStampLines();
+  const lines = [l1, l2, l3];
 
-  // --- Draw shield / crest in top-left ---
-  if (logoReady) {
-    const logoSize = Math.round(Math.min(w, h) * 0.12); // 12% of shortest edge
-    ctx.drawImage(logoImg, pad, pad, logoSize, logoSize);
+  // --- layout values ---
+  const outerPad = Math.round(w * 0.02);          // gap from image edge
+  const fontSize = Math.round(h * 0.03);
+  const lineHeight = fontSize + 2;
+  const innerXPad = Math.round(fontSize * 0.6);   // padding inside the box
+  const innerYPad = Math.round(fontSize * 0.5);
+
+  ctx.font = `${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+  ctx.textBaseline = "top";
+  ctx.textAlign = "right";
+
+  // Measure text widths so box hugs the text
+  let maxWidth = 0;
+  for (const line of lines) {
+    const w = ctx.measureText(line).width;
+    if (w > maxWidth) maxWidth = w;
   }
 
-  const boxH = lh * 4;
-  const x = pad;
-  const y = h - boxH - pad;
-  const boxW = Math.round(w * 0.8);
+  const boxHeight = lines.length * lineHeight + innerYPad * 2;
+  const rightX = w - outerPad;                    // visual right edge anchor
+  const boxX = rightX - maxWidth - innerXPad * 2; // box left
+  const boxY = h - boxHeight - outerPad;
+  const boxW = maxWidth + innerXPad * 2;
 
-  const g = ctx.createLinearGradient(x, y + boxH, x, y);
+  // --- shield / crest (still top-left) ---
+  const logoPad = outerPad;
+  const logoSize = Math.round(Math.min(w, h) * 0.12);
+  if (logoReady) {
+    ctx.drawImage(logoImg, logoPad, logoPad, logoSize, logoSize);
+  }
+
+  // --- gradient box snug to text ---
+  const g = ctx.createLinearGradient(boxX, boxY + boxHeight, boxX, boxY);
   g.addColorStop(0, "rgba(15,23,42,0.95)");
   g.addColorStop(0.7, "rgba(15,23,42,0.7)");
   g.addColorStop(1, "transparent");
   ctx.fillStyle = g;
-  ctx.fillRect(x, y, boxW, boxH);
+  ctx.fillRect(boxX, boxY, boxW, boxHeight);
 
-  const [l1, l2, l3] = buildStampLines();
-
+  // --- text aligned to the right, with inner padding ---
   ctx.fillStyle = "#fff";
-  ctx.textAlign = "right";
-  ctx.textBaseline = "top";
+  const textRightX = rightX - innerXPad; // so there's padding to the box edge
+  let ty = boxY + innerYPad;
 
-  let ty = y + pad;
-  const tx = x + boxW - pad;
-
-  ctx.font = `${lh}px system-ui`;
-  ctx.fillText(l1, tx, ty);
-  ty += lh + 2;
-  ctx.fillText(l2, tx, ty);
-  ty += lh + 2;
-  ctx.fillText(l3, tx, ty);
+  for (const line of lines) {
+    ctx.fillText(line, textRightX, ty);
+    ty += lineHeight;
+  }
 
   // --- SAFARI-SAFE BLOB CREATION ---
   canvas.toBlob((blob) => {
     console.log("canvas.toBlob result:", blob);
     if (!blob) {
-      // Safari fallback using dataURL → blob
       const dataURL = canvas.toDataURL("image/png");
       console.log("Using dataURL fallback");
       fetch(dataURL)
@@ -568,6 +583,7 @@ function drawStampedImage(w, h, drawer) {
     handleStampedBlob(blob);
   });
 }
+
 
 /* ============================================================
  *  SHARE / DOWNLOAD
