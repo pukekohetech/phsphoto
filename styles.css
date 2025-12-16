@@ -1,18 +1,52 @@
+/* Teacher ID Card Generator – System Light/Dark Theme (Organized & Enhanced) */
+
+/* ========================================
+   1. Design Tokens
+   ======================================== */
 :root {
   color-scheme: light dark;
-  --bg: canvas;
-  --fg: canvastext;
+
+  /* Core Colors (System-aware) */
+  --bg: canvas;                          /* Page background */
+  --fg: canvastext;                      /* Primary text */
   --border: color-mix(in oklab, currentColor 25%, transparent);
-  --accent: #2563eb;
-  --ok: #16a34a;
-  --err: #dc2626;
-  --radius: 12px;
+
+  /* Accent Colors */
+  --accent: #2563eb;                     /* Primary action */
+  --ok: #16a34a;                         /* Success */
+  --err: #dc2626;                        /* Error/Danger */
+
+  /* Panel Background (subtle contrast from page) */
+  --panel-bg: color-mix(in oklab, var(--bg) 92%, var(--fg) 8%);
+
+  /* Typography */
+  --font: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Arial, sans-serif;
+
+  /* Spacing & Sizing (Responsive clamps) */
   --space: clamp(10px, 2.2vw, 18px);
+  --space-sm: clamp(6px, 1.2vw, 10px);
   --field-pad: clamp(10px, 1.8vw, 14px);
-  --font: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Arial,
-    sans-serif;
+
+  /* Shape */
+  --radius: 12px;
+  --radius-sm: 10px;
+
+  /* Focus */
+  --focus-ring: color-mix(in oklab, var(--accent) 40%, transparent);
+
+  /* Transitions */
+  --transition-fast: 0.06s ease;
+  --transition: 0.12s ease;
+
+  /* Overlay Text (must match canvas logic) */
+  --overlay-font-size: 3vmin;
+  --overlay-padding: 0.45em 0.85em;
+  --overlay-outer-pad: 2%;               /* Right & bottom offset */
 }
 
+/* ========================================
+   2. Base Reset
+   ======================================== */
 * {
   box-sizing: border-box;
 }
@@ -30,7 +64,9 @@ body {
   color: var(--fg);
 }
 
-/* APP WRAPPER */
+/* ========================================
+   3. App Wrapper & Layout
+   ======================================== */
 #app {
   width: 100%;
   max-width: 1100px;
@@ -40,20 +76,7 @@ body {
   gap: var(--space);
 }
 
-/* TITLES */
-h1, h2, h3 { margin: 0; }
-
-h2 {
-  margin-bottom: 4px;
-  font-size: clamp(18px, 2.2vw, 24px);
-}
-
-.sub {
-  opacity: 0.7;
-  font-size: clamp(12px, 1.6vw, 14px);
-}
-
-/* MAIN GRID (FIX FOR TOO-WIDE UI) */
+/* Main responsive grid */
 .grid {
   display: grid;
   gap: var(--space);
@@ -68,12 +91,31 @@ h2 {
   }
 }
 
-/* PANEL (CARD) */
+/* ========================================
+   4. Typography
+   ======================================== */
+h1, h2, h3 {
+  margin: 0;
+}
+
+h2 {
+  margin-bottom: 4px;
+  font-size: clamp(18px, 2.2vw, 24px);
+}
+
+.sub {
+  opacity: 0.7;
+  font-size: clamp(12px, 1.6vw, 14px);
+}
+
+/* ========================================
+   5. Panels & Stacks
+   ======================================== */
 .panel {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: var(--space);
-  background: color-mix(in oklab, var(--bg) 92%, var(--fg) 8%);
+  background: var(--panel-bg);
   width: 100%;
   max-width: 100%;
   overflow: hidden;
@@ -84,22 +126,35 @@ h2 {
   gap: var(--space);
 }
 
-/* FORM + BUTTONS */
-.fields { display: grid; gap: var(--space); }
+/* ========================================
+   6. Forms & Controls
+   ======================================== */
+.fields {
+  display: grid;
+  gap: var(--space);
+}
 
-.row { display: grid; gap: var(--space); }
+.row {
+  display: grid;
+  gap: var(--space);
+}
 
 @media (min-width: 600px) {
-  .row--2 { grid-template-columns: 1fr 1fr; }
+  .row--2 {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: var(--space-sm);
   font-size: clamp(12px, 1.6vw, 14px);
 }
 
-input, select, button, textarea {
+input,
+select,
+button,
+textarea {
   width: 100%;
   font: inherit;
   padding: var(--field-pad);
@@ -109,25 +164,30 @@ input, select, button, textarea {
   color: inherit;
 }
 
-textarea { resize: vertical; }
+textarea {
+  resize: vertical;
+}
 
+/* Focus states */
 input:focus,
 select:focus,
 button:focus,
 textarea:focus {
-  outline: 3px solid color-mix(in oklab, var(--accent) 40%, transparent);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
+/* Button row */
 .btn-row {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space);
 }
 
+/* Button base interaction */
 button {
   cursor: pointer;
-  transition: transform 0.06s ease, box-shadow 0.06s ease, background 0.12s ease;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition);
 }
 
 button:active {
@@ -135,16 +195,35 @@ button:active {
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
 }
 
-.primary { background: var(--accent); color: #fff; border: none; }
-.success { background: var(--ok); color: #fff; border: none; }
-.danger { background: var(--err); color: #fff; border: none; }
+/* Button variants */
+.primary  { background: var(--accent); color: #fff; border: none; }
+.success  { background: var(--ok);     color: #fff; border: none; }
+.danger   { background: var(--err);    color: #fff; border: none; }
 
-button[disabled], button:disabled {
+button[disabled],
+button:disabled {
   opacity: 0.5;
   cursor: default;
 }
 
-/* TOAST */
+/* Header actions (PWA-style buttons) */
+.header-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* ========================================
+   7. Toast Notifications
+   ======================================== */
 .toast {
   display: none;
   padding: 10px 12px;
@@ -157,28 +236,34 @@ button[disabled], button:disabled {
 .toast.show { display: block; }
 .toast.error { background: var(--err); }
 
-/* LISTS */
-.small { font-size: 0.8rem; opacity: 0.75; }
+/* ========================================
+   8. Lists (Teacher List)
+   ======================================== */
+.small {
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
 
 #teacherList {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 6px;
+  gap: var(--space-sm);
 }
 
 #teacherList li {
-  padding: 6px 0;
+  padding: var(--space-sm) 0;
   border-bottom: 1px dashed var(--border);
 }
 
-#teacherList li:last-child { border-bottom: none; }
+#teacherList li:last-child {
+  border-bottom: none;
+}
 
-/* ==========================================
-   MEDIA AREA (VIDEO + PREVIEW + OVERLAYS)
-   ========================================== */
-
+/* ========================================
+   9. Media Area (Video / Preview)
+   ======================================== */
 .media-wrap {
   position: relative;
   width: 100%;
@@ -200,29 +285,10 @@ button[disabled], button:disabled {
   background: #000;
 }
 
-/* Use 4:3 box in landscape so it looks neat on desktop/tablet */
-@media (orientation: landscape) {
-  .media,
-  #video,
-  #preview {
-    aspect-ratio: auto;
-  }
-}
-
-/* In portrait, let the video/image use its real aspect ratio
-   so the overlay and stamped image line up */
-@media (orientation: portrait) {
-  .media,
-  #video,
-  #preview {
-    aspect-ratio: auto;
-  }
-}
-
-
-/* =====================
-   SHIELD OVERLAY
-   ===================== */
+/* ========================================
+   10. Overlay Elements (Shield & Text)
+   ======================================== */
+/* Shield overlay (top-left logo) */
 .shield-overlay,
 #shieldOverlay {
   position: absolute;
@@ -235,20 +301,14 @@ button[disabled], button:disabled {
   z-index: 5;
 }
 
-/* =====================
-   TEXT OVERLAY (WYSIWYG)
-   ===================== */
+/* Text overlay (WYSIWYG stamp – bottom-right) */
 .stamp-overlay,
 #overlayText {
   position: absolute;
-
-  /* Must match canvas: outerPad = 2% of min(w,h) */
-  right: 2%;
-  bottom: 2%;
-
-  /* Must match canvas: inner padding depends on font size */
-  padding: 0.45em 0.85em;
-  border-radius: 10px;
+  right: var(--overlay-outer-pad);
+  bottom: var(--overlay-outer-pad);
+  padding: var(--overlay-padding);
+  border-radius: var(--radius-sm);
 
   background: linear-gradient(
     to top,
@@ -258,30 +318,11 @@ button[disabled], button:disabled {
   );
   color: #fff;
   font-weight: 600;
-
-  /* Must match canvas: font = ~3% of min dimension */
-  font-size: 3vmin;
+  font-size: var(--overlay-font-size);
   line-height: 1.25;
-
   max-width: 78%;
   text-align: right;
   white-space: pre-line;
-
   pointer-events: none;
   z-index: 5;
-}
-
-/* OPTIONAL: PWA header action buttons */
-.header-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space);
-  align-items: center;
-  justify-content: space-between;
-}
-
-.header-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
 }
