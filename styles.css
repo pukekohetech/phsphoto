@@ -1,5 +1,319 @@
+/* Teacher ID Card Generator – Professional, Clean & Responsive (Mobile-First) */
+
 /* ========================================
-   8. Media / ID Preview – Cleaner Professional Look
+   1. Design Tokens
+   ======================================== */
+:root {
+  color-scheme: light dark;
+
+  /* Core Colors (System-aware) */
+  --bg: canvas;
+  --fg: canvastext;
+  --border: color-mix(in oklab, var(--fg) 15%, transparent);
+
+  /* Professional Accent Palette */
+  --accent: oklch(60% 0.25 260);              /* Modern, professional blue */
+  --accent-light: color-mix(in oklab, var(--accent) 20%, var(--bg));
+  --accent-dark: color-mix(in oklab, var(--accent) 80%, black);
+  --ok: #15803d;
+  --err: #b91c1c;
+
+  /* Branding */
+  --brand-primary: var(--accent);
+  --brand-gradient: linear-gradient(135deg, var(--brand-primary), var(--accent-dark));
+
+  /* Panel */
+  --panel-bg: color-mix(in oklab, var(--bg) 95%, var(--fg) 5%);
+  --panel-shadow: 0 8px 32px rgba(0,0,0,0.08);
+
+  /* Typography */
+  --font: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Arial, sans-serif;
+  --font-heading: var(--font);
+
+  /* Spacing */
+  --space-base: clamp(16px, 3vw, 40px);
+  --space: var(--space-base);
+  --space-sm: clamp(8px, 1.5vw, 16px);
+  --field-pad: clamp(14px, 2.5vw, 20px);
+
+  /* Shape */
+  --radius: 16px;
+  --radius-sm: 12px;
+  --radius-id: 12px;                         /* Plastic ID card corners */
+
+  /* Focus */
+  --focus-ring: color-mix(in oklab, var(--accent) 50%, transparent);
+
+  /* Transitions */
+  --transition-fast: 0.1s ease;
+  --transition: 0.2s ease;
+
+  /* Overlay */
+  --overlay-font-size: clamp(2.8vmin, 3.5vw, 32px);
+  --overlay-padding: 0.6em 1em;
+  --overlay-outer-pad: clamp(16px, 3%, 40px);
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+/* ========================================
+   2. Base Reset
+   ======================================== */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font);
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.5;
+}
+
+/* ========================================
+   3. App Wrapper & Layout
+   ======================================== */
+#app {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: var(--space);
+  display: grid;
+  gap: var(--space);
+}
+
+.grid {
+  display: grid;
+  gap: var(--space);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+    align-items: start;
+  }
+}
+
+/* ========================================
+   4. Typography
+   ======================================== */
+h1, h2, h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(28px, 5vw, 42px);
+}
+
+h2 {
+  font-size: clamp(22px, 3.5vw, 32px);
+  margin-bottom: 8px;
+}
+
+.sub {
+  opacity: 0.75;
+  font-size: clamp(14px, 1.8vw, 16px);
+}
+
+/* ========================================
+   5. Panels & Stacks
+   ======================================== */
+.panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space);
+  background: var(--panel-bg);
+  box-shadow: var(--panel-shadow);
+  transition: box-shadow var(--transition);
+}
+
+.panel:hover {
+  box-shadow: 0 12px 48px rgba(0,0,0,0.12);
+}
+
+.stack {
+  display: grid;
+  gap: var(--space);
+}
+
+/* ========================================
+   6. Forms & Controls
+   ======================================== */
+.fields {
+  display: grid;
+  gap: var(--space);
+}
+
+.row {
+  display: grid;
+  gap: var(--space);
+}
+
+.row--2 {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 600px) {
+  .row--2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+label {
+  display: block;
+  margin-bottom: var(--space-sm);
+  font-weight: 600;
+  font-size: clamp(14px, 1.8vw, 16px);
+}
+
+input,
+select,
+textarea,
+button {
+  width: 100%;
+  font: inherit;
+  padding: var(--field-pad);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: inherit;
+  font-size: clamp(16px, 2vw, 17px);
+  transition: border var(--transition), box-shadow var(--transition);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+/* Button row */
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space);
+  margin-top: var(--space);
+}
+
+button {
+  cursor: pointer;
+  min-height: 52px;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+}
+
+button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+.primary  { background: var(--brand-primary); color: #fff; }
+.success  { background: var(--ok); color: #fff; }
+.danger   { background: var(--err); color: #fff; }
+
+button[disabled],
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Header actions */
+.header-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* ========================================
+   7. Toast Notifications
+   ======================================== */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 14px 24px;
+  border-radius: var(--radius);
+  background: var(--ok);
+  color: #fff;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  opacity: 0;
+  transition: opacity var(--transition), transform var(--transition);
+  z-index: 100;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-12px);
+}
+
+.toast.error { background: var(--err); }
+
+/* ========================================
+   8. Lists (Teacher List)
+   ======================================== */
+.small {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+#teacherList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-sm);
+}
+
+#teacherList li {
+  padding: var(--space-sm) 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+#teacherList li:last-child {
+  border-bottom: none;
+}
+
+/* ========================================
+   9. Media / ID Preview – Clean Professional ID Card
    ======================================== */
 .media-wrap {
   position: relative;
@@ -8,20 +322,20 @@
   margin: 0 auto;
   border-radius: var(--radius-id);
   overflow: hidden;
-  background: color-mix(in oklab, var(--panel-bg) 80%, white 20%); /* Clean card base – adapts to light/dark */
+  background: color-mix(in oklab, var(--panel-bg) 80%, white 20%);
   border: 1px solid var(--border);
   box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-  aspect-ratio: 1.586 / 1; /* Standard CR80 ID card ratio */
+  aspect-ratio: 1.586 / 1; /* Standard CR80 ID card ratio (85.6mm × 54mm) */
 }
 
-/* Optional subtle brand header bar – common in real school IDs (remove if not wanted) */
+/* Optional subtle brand header bar – delete this block if you want no header */
 .media-wrap::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 22%; /* Thinner for less intrusion */
+  height: 22%;
   background: var(--brand-gradient);
   opacity: 0.85;
   z-index: 1;
@@ -29,22 +343,20 @@
   border-bottom-right-radius: var(--radius-sm);
 }
 
-/* No holographic/security pattern – removed for clarity */
-
 .media,
 #video,
 #preview {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Professional ID photo crop – centers and fills nicely */
-  /* Alternative: object-fit: contain; */ /* Uncomment if you prefer no cropping/black bars */
+  object-fit: cover;         /* Professional cropped photo – centers face nicely */
+  /* object-fit: contain; */ /* Uncomment for letterboxed with black bars instead */
   background: #111;
   display: block;
 }
 
-/* Shield / Logo overlay – larger, subtle shadow */
-#shieldOverlay,
-.shield-overlay {
+/* Shield / Logo overlay */
+.shield-overlay,
+#shieldOverlay {
   position: absolute;
   left: var(--overlay-outer-pad);
   top: var(--overlay-outer-pad);
@@ -55,14 +367,14 @@
   z-index: 5;
 }
 
-/* Text stamp overlay – cleaner, less aggressive gradient */
-#overlayText,
-.stamp-overlay {
+/* Text stamp overlay */
+.stamp-overlay,
+#overlayText {
   position: absolute;
   right: var(--overlay-outer-pad);
   bottom: var(--overlay-outer-pad);
   padding: var(--overlay-padding);
-  background: rgba(0,0,0,0.6); /* Simpler semi-transparent black for readability */
+  background: rgba(0,0,0,0.6);
   color: #fff;
   font-weight: 700;
   font-size: var(--overlay-font-size);
