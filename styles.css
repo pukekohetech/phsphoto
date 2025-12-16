@@ -1,48 +1,60 @@
-/* Teacher ID Card Generator – System Light/Dark Theme (Mobile-First + Improved Desktop) */
-
 /* ========================================
-   1. Design Tokens
+   1. Design Tokens – Professional Upgrade
    ======================================== */
 :root {
   color-scheme: light dark;
 
-  /* Core Colors (System-aware) */
+  /* Core Colors */
   --bg: canvas;
   --fg: canvastext;
-  --border: color-mix(in oklab, currentColor 25%, transparent);
+  --border: color-mix(in oklab, var(--fg) 15%, transparent);
 
-  /* Accent Colors */
-  --accent: #2563eb;
-  --ok: #16a34a;
-  --err: #dc2626;
+  /* Professional Accent Palette */
+  --accent: oklch(60% 0.25 260);          /* Modern blue – vibrant yet professional */
+  --accent-light: color-mix(in oklab, var(--accent) 20%, var(--bg));
+  --accent-dark: color-mix(in oklab, var(--accent) 80%, black);
+  --ok: #15803d;
+  --err: #b91c1c;
 
-  /* Panel Background */
-  --panel-bg: color-mix(in oklab, var(--bg) 92%, var(--fg) 8%);
+  /* Branding – easy to override per school */
+  --brand-primary: var(--accent);
+  --brand-gradient: linear-gradient(135deg, var(--brand-primary), var(--accent-dark));
+
+  /* Panel */
+  --panel-bg: color-mix(in oklab, var(--bg) 95%, var(--fg) 5%);
+  --panel-shadow: 0 8px 32px rgba(0,0,0,0.08);
 
   /* Typography */
   --font: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Arial, sans-serif;
+  --font-heading: var(--font);
 
-  /* Spacing – more generous on larger screens */
-  --space-base: clamp(12px, 2.5vw, 32px);     /* Increased upper limit for desktop */
+  /* Spacing */
+  --space-base: clamp(16px, 3vw, 40px);
   --space: var(--space-base);
-  --space-sm: clamp(6px, 1.2vw, 12px);
-  --field-pad: clamp(12px, 2vw, 18px);        /* Slightly larger inputs on desktop */
+  --space-sm: clamp(8px, 1.5vw, 16px);
+  --field-pad: clamp(14px, 2.5vw, 20px);
 
   /* Shape */
-  --radius: 14px;                             /* Slightly larger radius on bigger screens */
-  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-sm: 12px;
+  --radius-id: 12px;                      /* Typical plastic ID card corner */
 
   /* Focus */
-  --focus-ring: color-mix(in oklab, var(--accent) 40%, transparent);
+  --focus-ring: color-mix(in oklab, var(--accent) 50%, transparent);
 
   /* Transitions */
-  --transition-fast: 0.06s ease;
-  --transition: 0.12s ease;
+  --transition-fast: 0.1s ease;
+  --transition: 0.2s ease;
 
-  /* Overlay Text */
-  --overlay-font-size: clamp(2.5vmin, 3vw, 28px); /* Better readability on large screens */
-  --overlay-padding: 0.5em 0.9em;
-  --overlay-outer-pad: clamp(12px, 2%, 32px);     /* More breathing room on desktop */
+  /* Overlay */
+  --overlay-font-size: clamp(2.8vmin, 3.5vw, 32px);
+  --overlay-padding: 0.6em 1em;
+  --overlay-outer-pad: clamp(16px, 3%, 40px);
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
 }
 
 /* ========================================
@@ -63,6 +75,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
+  line-height: 1.5;
 }
 
 /* ========================================
@@ -70,43 +83,49 @@ body {
    ======================================== */
 #app {
   width: 100%;
-  max-width: 1400px;                          /* Wider max-width for laptops/desktops */
+  max-width: 1600px;
   margin: 0 auto;
   padding: var(--space);
   display: grid;
   gap: var(--space);
 }
 
-/* Main responsive grid – improved column behavior */
 .grid {
   display: grid;
   gap: var(--space);
   grid-template-columns: 1fr;
-  width: 100%;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 900px) {
   .grid {
-    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); /* Prevents overly stretched panels */
+    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
     align-items: start;
   }
 }
 
 /* ========================================
-   4. Typography
+   4. Typography – Professional Hierarchy
    ======================================== */
 h1, h2, h3 {
   margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.2;
+  text-wrap: balance;                     /* Modern balanced headings */
+}
+
+h1 {
+  font-size: clamp(28px, 5vw, 42px);
 }
 
 h2 {
-  margin-bottom: 6px;
-  font-size: clamp(20px, 2.8vw, 28px);        /* Larger headings on desktop */
+  font-size: clamp(22px, 3.5vw, 32px);
+  margin-bottom: 8px;
 }
 
 .sub {
-  opacity: 0.7;
-  font-size: clamp(13px, 1.6vw, 15px);
+  opacity: 0.75;
+  font-size: clamp(14px, 1.8vw, 16px);
 }
 
 /* ========================================
@@ -117,10 +136,12 @@ h2 {
   border-radius: var(--radius);
   padding: var(--space);
   background: var(--panel-bg);
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06);    /* Subtle depth on larger screens */
+  box-shadow: var(--panel-shadow);
+  transition: box-shadow var(--transition);
+}
+
+.panel:hover {
+  box-shadow: 0 12px 48px rgba(0,0,0,0.12);
 }
 
 .stack {
@@ -136,9 +157,10 @@ h2 {
   gap: var(--space);
 }
 
-.row {
+.row--2 {
   display: grid;
   gap: var(--space);
+  grid-template-columns: 1fr;
 }
 
 @media (min-width: 600px) {
@@ -150,39 +172,39 @@ h2 {
 label {
   display: block;
   margin-bottom: var(--space-sm);
-  font-size: clamp(13px, 1.6vw, 15px);
-  font-weight: 500;
+  font-weight: 600;
+  font-size: clamp(14px, 1.8vw, 16px);
 }
 
 input,
 select,
-button,
-textarea {
+textarea,
+button {
   width: 100%;
   font: inherit;
   padding: var(--field-pad);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
-  background: inherit;
+  background: var(--bg);
   color: inherit;
-  font-size: clamp(15px, 1.8vw, 16px);        /* Slightly larger text in fields on desktop */
+  font-size: clamp(16px, 2vw, 17px);
+  transition: border var(--transition), box-shadow var(--transition);
 }
 
 textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 120px;
 }
 
-/* Focus states */
 input:focus,
 select:focus,
-button:focus,
 textarea:focus {
-  outline: 3px solid var(--focus-ring);
-  outline-offset: 2px;
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--focus-ring);
 }
 
-/* Button row */
+/* Buttons */
 .btn-row {
   display: flex;
   flex-wrap: wrap;
@@ -190,104 +212,104 @@ textarea:focus {
   margin-top: var(--space);
 }
 
-/* Button base interaction */
 button {
   cursor: pointer;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition);
-  min-height: 48px;                           /* Better touch/target size on desktop too */
+  min-height: 52px;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
 }
 
 button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
 }
 
 button:active {
-  transform: translateY(1px);
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+  transform: translateY(0);
 }
 
-/* Button variants */
-.primary  { background: var(--accent); color: #fff; border: none; }
-.success  { background: var(--ok);     color: #fff; border: none; }
-.danger   { background: var(--err);    color: #fff; border: none; }
+.primary  { background: var(--brand-primary); color: #fff; }
+.success  { background: var(--ok); color: #fff; }
+.danger   { background: var(--err); color: #fff; }
 
-button[disabled],
-button:disabled {
-  opacity: 0.5;
-  cursor: default;
+button[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
   transform: none;
 }
 
-/* Header actions */
-.header-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space);
-  align-items: center;
-  justify-content: space-between;
-}
-
-.header-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
 /* ========================================
-   7. Toast Notifications
+   7. Toast
    ======================================== */
 .toast {
-  display: none;
-  padding: 12px 16px;
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 14px 24px;
   border-radius: var(--radius);
   background: var(--ok);
   color: #fff;
-  font-size: 0.95rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  opacity: 0;
+  transition: opacity var(--transition), transform var(--transition);
+  z-index: 100;
 }
 
-.toast.show { display: block; }
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-12px);
+}
+
 .toast.error { background: var(--err); }
 
 /* ========================================
-   8. Lists (Teacher List)
-   ======================================== */
-.small {
-  font-size: 0.85rem;
-  opacity: 0.75;
-}
-
-#teacherList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: var(--space-sm);
-}
-
-#teacherList li {
-  padding: var(--space-sm) 0;
-  border-bottom: 1px dashed var(--border);
-}
-
-#teacherList li:last-child {
-  border-bottom: none;
-}
-
-/* ========================================
-   9. Media Area (Video / Preview)
+   8. Media / ID Preview – Professional ID Card Look
    ======================================== */
 .media-wrap {
   position: relative;
   width: 100%;
-  max-width: 100%;
-  border-radius: var(--radius);
+  max-width: 600px;
+  margin: 0 auto;
+  border-radius: var(--radius-id);
   overflow: hidden;
-  background: #000;
-  border: 1px solid var(--border);
-  aspect-ratio: 4 / 3;                        /* Consistent box on all orientations */
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0); /* Light fallback */
+  background: linear-gradient(135deg, var(--panel-bg), color-mix(in oklab, var(--panel-bg) 90%, var(--fg)));
+  border: 2px solid var(--border);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+  aspect-ratio: 1.586 / 1; /* Standard CR80 ID card ratio (3.375" × 2.125") */
+}
+
+/* Brand header bar – very common in professional school IDs */
+.media-wrap::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 30%;
+  background: var(--brand-gradient);
+  opacity: 0.9;
+  z-index: 1;
+}
+
+/* Subtle holographic/security overlay */
+.media-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(255,255,255,0.05) 10px,
+    rgba(255,255,255,0.05) 20px
+  );
+  pointer-events: none;
+  z-index: 4;
 }
 
 .media,
@@ -295,46 +317,20 @@ button:disabled {
 #preview {
   width: 100%;
   height: 100%;
-  object-fit: contain;                        /* Better for portraits/ID photos – no cropping */
-  display: block;
-  background: #000;
+  object-fit: cover; /* Better for photos in ID context */
+  background: #111;
 }
 
-/* ========================================
-   10. Overlay Elements
-   ======================================== */
-.shield-overlay,
+/* Shield / Logo overlay */
 #shieldOverlay {
-  position: absolute;
-  left: var(--overlay-outer-pad);
-  top: var(--overlay-outer-pad);
-  width: clamp(48px, 12vmin, 100px);          /* Larger shield on desktop */
-  height: auto;
-  pointer-events: none;
-  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.5));
-  z-index: 5;
+  width: clamp(60px, 15vmin, 120px);
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
 }
 
-.stamp-overlay,
+/* Text stamp overlay – improved gradient for readability */
 #overlayText {
-  position: absolute;
-  right: var(--overlay-outer-pad);
-  bottom: var(--overlay-outer-pad);
-  padding: var(--overlay-padding);
+  background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.5), transparent);
   border-radius: var(--radius-sm);
-  background: linear-gradient(
-    to top,
-    rgba(15,23,42,0.95),
-    rgba(15,23,42,0.7),
-    transparent
-  );
-  color: #fff;
-  font-weight: 600;
-  font-size: var(--overlay-font-size);
-  line-height: 1.3;
-  max-width: 80%;
-  text-align: right;
-  white-space: pre-line;
-  pointer-events: none;
-  z-index: 5;
-}
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+   }
