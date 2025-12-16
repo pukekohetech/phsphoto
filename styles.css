@@ -1,4 +1,4 @@
-/* Teacher ID Card Generator – System Light/Dark Theme (Organized & Enhanced) */
+/* Teacher ID Card Generator – System Light/Dark Theme (Mobile-First + Improved Desktop) */
 
 /* ========================================
    1. Design Tokens
@@ -7,28 +7,29 @@
   color-scheme: light dark;
 
   /* Core Colors (System-aware) */
-  --bg: canvas;                          /* Page background */
-  --fg: canvastext;                      /* Primary text */
+  --bg: canvas;
+  --fg: canvastext;
   --border: color-mix(in oklab, currentColor 25%, transparent);
 
   /* Accent Colors */
-  --accent: #2563eb;                     /* Primary action */
-  --ok: #16a34a;                         /* Success */
-  --err: #dc2626;                        /* Error/Danger */
+  --accent: #2563eb;
+  --ok: #16a34a;
+  --err: #dc2626;
 
-  /* Panel Background (subtle contrast from page) */
+  /* Panel Background */
   --panel-bg: color-mix(in oklab, var(--bg) 92%, var(--fg) 8%);
 
   /* Typography */
   --font: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Arial, sans-serif;
 
-  /* Spacing & Sizing (Responsive clamps) */
-  --space: clamp(10px, 2.2vw, 18px);
-  --space-sm: clamp(6px, 1.2vw, 10px);
-  --field-pad: clamp(10px, 1.8vw, 14px);
+  /* Spacing – more generous on larger screens */
+  --space-base: clamp(12px, 2.5vw, 32px);     /* Increased upper limit for desktop */
+  --space: var(--space-base);
+  --space-sm: clamp(6px, 1.2vw, 12px);
+  --field-pad: clamp(12px, 2vw, 18px);        /* Slightly larger inputs on desktop */
 
   /* Shape */
-  --radius: 12px;
+  --radius: 14px;                             /* Slightly larger radius on bigger screens */
   --radius-sm: 10px;
 
   /* Focus */
@@ -38,10 +39,10 @@
   --transition-fast: 0.06s ease;
   --transition: 0.12s ease;
 
-  /* Overlay Text (must match canvas logic) */
-  --overlay-font-size: 3vmin;
-  --overlay-padding: 0.45em 0.85em;
-  --overlay-outer-pad: 2%;               /* Right & bottom offset */
+  /* Overlay Text */
+  --overlay-font-size: clamp(2.5vmin, 3vw, 28px); /* Better readability on large screens */
+  --overlay-padding: 0.5em 0.9em;
+  --overlay-outer-pad: clamp(12px, 2%, 32px);     /* More breathing room on desktop */
 }
 
 /* ========================================
@@ -69,14 +70,14 @@ body {
    ======================================== */
 #app {
   width: 100%;
-  max-width: 1100px;
+  max-width: 1400px;                          /* Wider max-width for laptops/desktops */
   margin: 0 auto;
   padding: var(--space);
   display: grid;
   gap: var(--space);
 }
 
-/* Main responsive grid */
+/* Main responsive grid – improved column behavior */
 .grid {
   display: grid;
   gap: var(--space);
@@ -84,9 +85,9 @@ body {
   width: 100%;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 800px) {
   .grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); /* Prevents overly stretched panels */
     align-items: start;
   }
 }
@@ -99,13 +100,13 @@ h1, h2, h3 {
 }
 
 h2 {
-  margin-bottom: 4px;
-  font-size: clamp(18px, 2.2vw, 24px);
+  margin-bottom: 6px;
+  font-size: clamp(20px, 2.8vw, 28px);        /* Larger headings on desktop */
 }
 
 .sub {
   opacity: 0.7;
-  font-size: clamp(12px, 1.6vw, 14px);
+  font-size: clamp(13px, 1.6vw, 15px);
 }
 
 /* ========================================
@@ -119,6 +120,7 @@ h2 {
   width: 100%;
   max-width: 100%;
   overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);    /* Subtle depth on larger screens */
 }
 
 .stack {
@@ -148,7 +150,8 @@ h2 {
 label {
   display: block;
   margin-bottom: var(--space-sm);
-  font-size: clamp(12px, 1.6vw, 14px);
+  font-size: clamp(13px, 1.6vw, 15px);
+  font-weight: 500;
 }
 
 input,
@@ -162,10 +165,12 @@ textarea {
   border: 1px solid var(--border);
   background: inherit;
   color: inherit;
+  font-size: clamp(15px, 1.8vw, 16px);        /* Slightly larger text in fields on desktop */
 }
 
 textarea {
   resize: vertical;
+  min-height: 100px;
 }
 
 /* Focus states */
@@ -182,12 +187,19 @@ textarea:focus {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space);
+  margin-top: var(--space);
 }
 
 /* Button base interaction */
 button {
   cursor: pointer;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition);
+  min-height: 48px;                           /* Better touch/target size on desktop too */
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
 }
 
 button:active {
@@ -204,9 +216,10 @@ button[disabled],
 button:disabled {
   opacity: 0.5;
   cursor: default;
+  transform: none;
 }
 
-/* Header actions (PWA-style buttons) */
+/* Header actions */
 .header-row {
   display: flex;
   flex-wrap: wrap;
@@ -218,7 +231,7 @@ button:disabled {
 .header-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 /* ========================================
@@ -226,11 +239,12 @@ button:disabled {
    ======================================== */
 .toast {
   display: none;
-  padding: 10px 12px;
+  padding: 12px 16px;
   border-radius: var(--radius);
   background: var(--ok);
   color: #fff;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .toast.show { display: block; }
@@ -240,7 +254,7 @@ button:disabled {
    8. Lists (Teacher List)
    ======================================== */
 .small {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   opacity: 0.75;
 }
 
@@ -272,36 +286,35 @@ button:disabled {
   overflow: hidden;
   background: #000;
   border: 1px solid var(--border);
+  aspect-ratio: 4 / 3;                        /* Consistent box on all orientations */
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
 }
 
 .media,
 #video,
 #preview {
   width: 100%;
-  max-width: 100%;
-  height: auto;
-  object-fit: cover;
+  height: 100%;
+  object-fit: contain;                        /* Better for portraits/ID photos – no cropping */
   display: block;
   background: #000;
 }
 
 /* ========================================
-   10. Overlay Elements (Shield & Text)
+   10. Overlay Elements
    ======================================== */
-/* Shield overlay (top-left logo) */
 .shield-overlay,
 #shieldOverlay {
   position: absolute;
-  left: clamp(8px, 2vw, 16px);
-  top: clamp(8px, 2vw, 16px);
-  width: clamp(40px, 10vmin, 72px);
+  left: var(--overlay-outer-pad);
+  top: var(--overlay-outer-pad);
+  width: clamp(48px, 12vmin, 100px);          /* Larger shield on desktop */
   height: auto;
   pointer-events: none;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.5));
   z-index: 5;
 }
 
-/* Text overlay (WYSIWYG stamp – bottom-right) */
 .stamp-overlay,
 #overlayText {
   position: absolute;
@@ -309,7 +322,6 @@ button:disabled {
   bottom: var(--overlay-outer-pad);
   padding: var(--overlay-padding);
   border-radius: var(--radius-sm);
-
   background: linear-gradient(
     to top,
     rgba(15,23,42,0.95),
@@ -319,8 +331,8 @@ button:disabled {
   color: #fff;
   font-weight: 600;
   font-size: var(--overlay-font-size);
-  line-height: 1.25;
-  max-width: 78%;
+  line-height: 1.3;
+  max-width: 80%;
   text-align: right;
   white-space: pre-line;
   pointer-events: none;
